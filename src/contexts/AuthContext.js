@@ -1,6 +1,6 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
@@ -14,7 +14,28 @@ export const AuthProvider = ({ children }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
         });
-        if (!res.ok) throw new Error("Невірний логін або пароль");
+
+        if (!res.ok) {
+            throw new Error("Невірний логін або пароль");
+        }
+
+        const data = await res.json();
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
+    };
+
+    const register = async (email, password, role) => {
+        const res = await fetch("http://localhost:8000/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, role }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "Помилка реєстрації");
+        }
+
         const data = await res.json();
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
@@ -26,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );
