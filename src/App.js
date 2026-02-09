@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./contexts/AuthContext";
 import { useContext } from "react";
 import LoginPage from "./pages/LoginPage";
-import OwnerDashboard from "./pages/owner/Dashboard";
+import {OwnerDashboard} from "./pages/owner/Dashboard";
 import ManagerDashboard from "./pages/manager/Dashboard";
 import EmployeeTasks from "./pages/employee/MyTasks";
 import {LandingPage} from "./pages/LandingPage";

@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 import { redirectByRole } from "../utils/redirectByRole";
 
 export const AuthContext = createContext(null);
@@ -9,81 +11,81 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // --- init from localStorage ---
+    // --- Ініціалізація з localStorage ---
     useEffect(() => {
         const stored = localStorage.getItem("user");
-        if (stored) {
-            setUser(JSON.parse(stored));
-        }
+        if (stored) setUser(JSON.parse(stored));
         setLoading(false);
     }, []);
 
-    // --- login ---
+    // --- Login через Firebase ---
     const login = async (email, password, navigate) => {
-        const res = await fetch(`${API}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
+        try {
+            // 1. Firebase Auth
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await userCredential.user.getIdToken();
 
-        if (!res.ok) {
-            throw new Error("Невірний email або пароль");
+            // 2. GET /auth/me на бекенд для отримання ролі + business
+            const res = await fetch(`${API}/auth/me`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            if (!res.ok) throw new Error("Не вдалося отримати інформацію користувача");
+
+            const data = await res.json();
+
+            const userData = {
+                email: data.email,
+                role: data.role,
+                businessId: data.business_id,
+                token: idToken, // Firebase token
+            };
+
+            setUser(userData);
+            localStorage.setItem("user", JSON.stringify(userData));
+
+            navigate(redirectByRole(userData.role));
+        } catch (err) {
+            throw new Error(err.message || "Помилка логіну");
         }
-
-        const data = await res.json();
-
-        const userData = {
-            email: data.email,
-            role: data.role,
-            token: data.access_token,
-        };
-
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-
-        navigate(redirectByRole(userData.role));
     };
 
-    // --- owner register ---
+    // --- Owner реєстрація через бекенд ---
     const registerOwner = async (email, password, business_name) => {
-        const res = await fetch(`${API}/auth/register-owner`, {
+        const res = await fetch(`${API}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password, business_name }),
         });
 
-        if (!res.ok) {
-            throw new Error("Помилка реєстрації");
-        }
+        if (!res.ok) throw new Error("Помилка реєстрації");
 
         const data = await res.json();
 
         const userData = {
             email: data.email,
             role: data.role,
-            token: data.access_token,
+            businessId: data.business_id,
+            token: null, // ще не залогінений через Firebase
         };
 
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
     };
 
-    // --- logout ---
-    const logout = () => {
+    // --- Logout ---
+    const logout = async () => {
         setUser(null);
         localStorage.removeItem("user");
-    };
-
-    const value = {
-        user,
-        loading,
-        login,
-        registerOwner,
-        logout,
+        await auth.signOut();
     };
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider value={{ user, loading, login, registerOwner, logout }}>
             {!loading && children}
         </AuthContext.Provider>
     );
