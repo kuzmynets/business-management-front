@@ -1,60 +1,61 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
 
-export const LoginPage = () => {
+export default function LoginPage() {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+        setError(null);
+
         try {
-            await login(email, password);
-            navigate("/dashboard");
+            await login(email, password, navigate);
         } catch (err) {
             setError(err.message);
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-                <h2 className="text-2xl font-bold mb-6 text-center">Вхід</h2>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block mb-1 font-medium">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block mb-1 font-medium">Пароль</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                        Увійти
-                    </button>
-                </form>
-            </div>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <form
+                onSubmit={handleSubmit}
+                className="w-full max-w-sm bg-white p-6 rounded shadow"
+            >
+                <h1 className="text-xl font-semibold mb-4">Login</h1>
+
+                {error && <div className="mb-3 text-red-500">{error}</div>}
+
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="w-full mb-3 p-2 border rounded"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+
+                <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full mb-4 p-2 border rounded"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+
+                <button
+                    type="submit"
+                    className="w-full bg-black text-white py-2 rounded"
+                >
+                    Sign in
+                </button>
+            </form>
         </div>
     );
-};
+}

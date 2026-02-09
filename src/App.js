@@ -1,31 +1,64 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { LoginPage } from "./pages/LoginPage";
-import { Dashboard } from "./pages/Dashboard";
-import { PrivateRoute } from "./components/PrivateRoute";
-import { Navigate } from "react-router-dom";
-import{RegisterPage} from "./pages/RegisterPage";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, AuthContext } from "./contexts/AuthContext";
+import { useContext } from "react";
+import LoginPage from "./pages/LoginPage";
+import OwnerDashboard from "./pages/owner/Dashboard";
+import ManagerDashboard from "./pages/manager/Dashboard";
+import EmployeeTasks from "./pages/employee/MyTasks";
+import {LandingPage} from "./pages/LandingPage";
+import {RegisterOwnerPage} from "./pages/RegisterOwnerPage";
 
-function App() {
+function ProtectedRoute({ children, roles }) {
+    const { user, loading } = useContext(AuthContext);
+
+    if (loading) return null;
+    if (!user) return <Navigate to="/login" />;
+    if (roles && !roles.includes(user.role)) return <Navigate to="/login" />;
+
+    return children;
+}
+
+export default function App() {
     return (
         <AuthProvider>
-            <Router>
+            <BrowserRouter>
+
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" />} />
+                    <Route path="/" element={<LandingPage />} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/register" element={<RegisterOwnerPage />} />
+
                     <Route
-                        path="/dashboard"
+                        path="/owner/dashboard"
                         element={
-                            <PrivateRoute roles={["admin", "manager", "user"]}>
-                                <Dashboard />
-                            </PrivateRoute>
+                            <ProtectedRoute roles={["OWNER"]}>
+                                <OwnerDashboard />
+                            </ProtectedRoute>
                         }
                     />
+
+                    <Route
+                        path="/manager/dashboard"
+                        element={
+                            <ProtectedRoute roles={["MANAGER"]}>
+                                <ManagerDashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/employee/tasks"
+                        element={
+                            <ProtectedRoute roles={["EMPLOYEE"]}>
+                                <EmployeeTasks />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
-            </Router>
+
+            </BrowserRouter>
         </AuthProvider>
     );
 }
-
-export default App;
