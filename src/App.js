@@ -2,11 +2,14 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./contexts/AuthContext";
 import { useContext } from "react";
 import LoginPage from "./pages/LoginPage";
-import {OwnerDashboard} from "./pages/owner/Dashboard";
-import ManagerDashboard from "./pages/manager/Dashboard";
-import EmployeeTasks from "./pages/employee/MyTasks";
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import ManagerDashboard from "./pages/manager/ManagerDashboard";
+import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import {LandingPage} from "./pages/LandingPage";
 import {RegisterOwnerPage} from "./pages/RegisterOwnerPage";
+import Team from "./pages/owner/Team";
+import AcceptInvite from "./pages/AcceptInvite";
+
 
 function ProtectedRoute({ children, roles }) {
     const { user, loading } = useContext(AuthContext);
@@ -27,6 +30,7 @@ export default function App() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterOwnerPage />} />
+                    <Route path="/accept-invite/:token" element={<AcceptInvite />} />
 
                     <Route
                         path="/owner/dashboard"
@@ -51,6 +55,15 @@ export default function App() {
                         element={
                             <ProtectedRoute roles={["EMPLOYEE"]}>
                                 <EmployeeTasks />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/owner/team"
+                        element={
+                            <ProtectedRoute roles={["OWNER"]}>
+                                <Team />
                             </ProtectedRoute>
                         }
                     />

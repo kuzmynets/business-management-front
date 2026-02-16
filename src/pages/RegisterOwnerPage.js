@@ -17,7 +17,7 @@ export const RegisterOwnerPage = () => {
 
         try {
             await registerOwner(email, password, businessName);
-            navigate("/dashboard");
+            navigate("/owner/dashboard");
         } catch (e) {
             setError(e.message);
         }
