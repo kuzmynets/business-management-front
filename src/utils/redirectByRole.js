@@ -1,6 +1,6 @@
 export const redirectByRole = (role) => {
     if (role === "OWNER") return "/owner/dashboard";
     if (role === "MANAGER") return "/manager/dashboard";
-    if (role === "EMPLOYEE") return "/employee/tasks";
+    if (role === "EMPLOYEE") return "/employee/dashboard";
     return "/login";
 };

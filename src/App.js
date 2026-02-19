@@ -4,7 +4,7 @@ import { useContext } from "react";
 import LoginPage from "./pages/LoginPage";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
-import EmployeeTasks from "./pages/employee/EmployeeTasks";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import {LandingPage} from "./pages/LandingPage";
 import {RegisterOwnerPage} from "./pages/RegisterOwnerPage";
 import Team from "./pages/owner/Team";
@@ -51,10 +51,10 @@ export default function App() {
                     />
 
                     <Route
-                        path="/employee/tasks"
+                        path="/employee/dashboard"
                         element={
-                            <ProtectedRoute roles={["EMPLOYEE"]}>
-                                <EmployeeTasks />
+                            <ProtectedRoute role="EMPLOYEE">
+                                <EmployeeDashboard />
                             </ProtectedRoute>
                         }
                     />
