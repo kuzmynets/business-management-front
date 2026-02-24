@@ -9,7 +9,9 @@ import {LandingPage} from "./pages/LandingPage";
 import {RegisterOwnerPage} from "./pages/RegisterOwnerPage";
 import Team from "./pages/owner/Team";
 import AcceptInvite from "./pages/AcceptInvite";
-
+import ProjectDetails from "./pages/manager/ProjectDetails";
+import TasksPage from "./pages/manager/TaskPage";
+import OrdersPage from "./pages/manager/OrdersPage";
 
 function ProtectedRoute({ children, roles }) {
     const { user, loading } = useContext(AuthContext);
@@ -31,6 +33,9 @@ export default function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterOwnerPage />} />
                     <Route path="/accept-invite/:token" element={<AcceptInvite />} />
+                    <Route path="/manager/projects/:id" element={<ProjectDetails />} />
+                    <Route path="/manager/tasks" element={<TasksPage />} />
+                    <Route path="/manager/orders" element={<OrdersPage />} />
 
                     <Route
                         path="/owner/dashboard"
