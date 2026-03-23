@@ -12,7 +12,7 @@ import AcceptInvite from "./pages/AcceptInvite";
 import ProjectDetails from "./pages/manager/ProjectDetails";
 import TasksPage from "./pages/manager/TaskPage";
 import OrdersPage from "./pages/manager/OrdersPage";
-
+import MyBusiness from "./pages/owner/MyBusiness";
 function ProtectedRoute({ children, roles }) {
     const { user, loading } = useContext(AuthContext);
 
@@ -69,6 +69,14 @@ export default function App() {
                         element={
                             <ProtectedRoute roles={["OWNER"]}>
                                 <Team />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/owner/business"
+                        element={
+                            <ProtectedRoute roles={["OWNER"]}>
+                                <MyBusiness />
                             </ProtectedRoute>
                         }
                     />
