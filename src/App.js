@@ -16,6 +16,7 @@ import MyBusiness from "./pages/owner/MyBusiness";
 import OwnerOrdersPage from "./pages/owner/Orders";
 import Finance from "./pages/owner/Finance";
 import Analytic from "./pages/owner/Analytic";
+import Subscribe from "./pages/owner/Subscribe";
 
 function ProtectedRoute({ children, roles }) {
     const { user, loading } = useContext(AuthContext);
@@ -108,6 +109,15 @@ export default function App() {
                         element={
                             <ProtectedRoute roles={["OWNER"]}>
                                 <Analytic />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/owner/subscribe"
+                        element={
+                            <ProtectedRoute roles={["OWNER"]}>
+                                <Subscribe />
                             </ProtectedRoute>
                         }
                     />
