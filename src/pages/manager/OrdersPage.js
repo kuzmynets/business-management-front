@@ -1,249 +1,304 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { apiRequest } from "../../api/client";
 import Toolbar from "../../components/Toolbar";
 
-export default function OrdersPage() {
+export default function ManagerOrders() {
+
     const { user } = useContext(AuthContext);
 
     const [orders, setOrders] = useState([]);
+    const [employees, setEmployees] = useState([]);
+
+    const [title, setTitle] = useState("");
+    const [client, setClient] = useState("");
+    const [deadline, setDeadline] = useState("");
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const [statusFilter, setStatusFilter] = useState("");
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [taskTitle, setTaskTitle] = useState("");
+    const [taskAssignee, setTaskAssignee] = useState("");
 
-    const [showForm, setShowForm] = useState(false);
-    const [editingOrder, setEditingOrder] = useState(null);
+    useEffect(()=>{
+        loadData();
+    },[]);
 
-    const emptyForm = {
-        title: "",
-        description: "",
-        status: "NEW",
-        deadline: "",
-        client_name: ""
-    };
-
-    const [form, setForm] = useState(emptyForm);
-
-    useEffect(() => {
-        fetchOrders();
-    }, [statusFilter]);
-
-    const fetchOrders = async () => {
-        setLoading(true);
+    const loadData = async () => {
         try {
-            let url = "/orders";
-            if (statusFilter) url += `?status=${statusFilter}`;
-            const data = await apiRequest(url);
-            setOrders(Array.isArray(data) ? data : []);
+
+            const [ordersData, employeesData] = await Promise.all([
+                apiRequest("/orders"),
+                apiRequest("/employees")
+            ]);
+
+            setOrders(Array.isArray(ordersData) ? ordersData : []);
+            setEmployees(Array.isArray(employeesData) ? employeesData : []);
+
         } catch {
-            setError("Failed to load orders");
+            setError("Failed to load data");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+    const createOrder = async (e) => {
+        e.preventDefault();
 
-    const handleCreateOrUpdate = async () => {
         try {
-            if (editingOrder) {
-                await apiRequest(`/orders/${editingOrder.id}`, {
-                    method: "PUT",
-                    body: JSON.stringify(form)
-                });
-            } else {
-                await apiRequest("/orders", {
-                    method: "POST",
-                    body: JSON.stringify(form)
-                });
-            }
 
-            setForm(emptyForm);
-            setEditingOrder(null);
-            setShowForm(false);
-            fetchOrders();
+            const order = await apiRequest("/orders", {
+                method: "POST",
+                body: JSON.stringify({
+                    title,
+                    client,
+                    deadline
+                })
+            });
+
+            setOrders(prev => [...prev, order]);
+
+            setTitle("");
+            setClient("");
+            setDeadline("");
+
         } catch {
-            setError("Failed to save order");
+            setError("Failed to create order");
         }
     };
 
-    const handleEdit = (order) => {
-        setEditingOrder(order);
-        setForm({
-            title: order.title || "",
-            description: order.description || "",
-            status: order.status || "NEW",
-            deadline: order.deadline || "",
-            client_name: order.client_name || ""
-        });
-        setShowForm(true);
-    };
+    const updateStatus = async (orderId, status) => {
 
-    const handleStatusChange = async (id, status) => {
         try {
-            await apiRequest(`/orders/${id}/status`, {
+
+            await apiRequest(`/orders/${orderId}/status`, {
                 method: "PATCH",
                 body: JSON.stringify({ status })
             });
-            fetchOrders();
+
+            setOrders(prev =>
+                prev.map(o =>
+                    o.id === orderId ? { ...o, status } : o
+                )
+            );
+
         } catch {
             setError("Failed to update status");
         }
     };
 
-    const statusOptions = ["NEW", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
+    const createTask = async (e) => {
+
+        e.preventDefault();
+
+        if(!selectedOrder) return;
+
+        try {
+
+            const task = await apiRequest("/tasks", {
+                method: "POST",
+                body: JSON.stringify({
+                    title: taskTitle,
+                    order_id: selectedOrder,
+                    assigned_to: taskAssignee,
+                    status: "NEW"
+                })
+            });
+
+            setOrders(prev =>
+                prev.map(o =>
+                    o.id === selectedOrder
+                        ? { ...o, tasks:[...(o.tasks||[]), task] }
+                        : o
+                )
+            );
+
+            setTaskTitle("");
+            setTaskAssignee("");
+
+        } catch {
+            setError("Failed to create task");
+        }
+    };
+
+    if(loading) return <div className="p-6">Loading...</div>;
 
     return (
         <>
-            <Toolbar role={user.role} />
+            <Toolbar role={user.role}/>
 
             <div className="min-h-screen bg-gray-100 p-6">
+
                 <div className="max-w-6xl mx-auto space-y-6">
 
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold">Orders Management</h1>
-                        <button
-                            onClick={() => {
-                                setForm(emptyForm);
-                                setEditingOrder(null);
-                                setShowForm(true);
-                            }}
-                            className="bg-green-600 text-white px-4 py-2 rounded"
-                        >
-                            Create Order
-                        </button>
-                    </div>
+                    <h1 className="text-2xl font-bold">
+                        Orders Management
+                    </h1>
 
-                    {error && <div className="text-red-600">{error}</div>}
-
-                    {/* FILTER */}
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="border px-3 py-2 rounded"
-                    >
-                        <option value="">All statuses</option>
-                        {statusOptions.map(s => (
-                            <option key={s} value={s}>{s}</option>
-                        ))}
-                    </select>
-
-                    {/* FORM */}
-                    {showForm && (
-                        <div className="bg-white p-6 rounded-xl shadow space-y-4">
-
-                            <input
-                                name="title"
-                                placeholder="Title"
-                                value={form.title}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
-
-                            <textarea
-                                name="description"
-                                placeholder="Description"
-                                value={form.description}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
-
-                            <input
-                                name="client_name"
-                                placeholder="Client name"
-                                value={form.client_name}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
-
-                            <select
-                                name="status"
-                                value={form.status}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            >
-                                {statusOptions.map(s => (
-                                    <option key={s} value={s}>{s}</option>
-                                ))}
-                            </select>
-
-                            <input
-                                type="date"
-                                name="deadline"
-                                value={form.deadline}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
-
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={handleCreateOrUpdate}
-                                    className="bg-blue-600 text-white px-4 py-2 rounded"
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    onClick={() => setShowForm(false)}
-                                    className="bg-gray-300 px-4 py-2 rounded"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-
+                    {error && (
+                        <div className="text-red-600">
+                            {error}
                         </div>
                     )}
 
-                    {/* LIST */}
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : orders.length === 0 ? (
-                        <div className="text-gray-500">No orders</div>
-                    ) : (
-                        <div className="space-y-4">
-                            {orders.map(order => (
-                                <div key={order.id} className="bg-white p-5 rounded shadow">
+                    {/* CREATE ORDER */}
 
-                                    <div className="flex justify-between">
-                                        <div>
-                                            <div className="font-semibold text-lg">{order.title}</div>
-                                            <div className="text-sm text-gray-500">
-                                                Client: {order.client_name || "—"}
-                                            </div>
+                    <form
+                        onSubmit={createOrder}
+                        className="bg-white p-4 rounded shadow space-y-3"
+                    >
+
+                        <h2 className="font-semibold">
+                            Create Order
+                        </h2>
+
+                        <input
+                            value={title}
+                            onChange={e=>setTitle(e.target.value)}
+                            placeholder="Order title"
+                            className="w-full border px-3 py-2 rounded"
+                            required
+                        />
+
+                        <input
+                            value={client}
+                            onChange={e=>setClient(e.target.value)}
+                            placeholder="Client name"
+                            className="w-full border px-3 py-2 rounded"
+                            required
+                        />
+
+                        <input
+                            type="date"
+                            value={deadline}
+                            onChange={e=>setDeadline(e.target.value)}
+                            className="w-full border px-3 py-2 rounded"
+                        />
+
+                        <button className="bg-blue-600 text-white px-4 py-2 rounded">
+                            Create
+                        </button>
+
+                    </form>
+
+                    {/* ORDER LIST */}
+
+                    <div className="space-y-4">
+
+                        {orders.map(order => (
+
+                            <div
+                                key={order.id}
+                                className="bg-white p-4 rounded shadow space-y-3"
+                            >
+
+                                <div className="flex justify-between">
+
+                                    <div>
+
+                                        <div className="font-semibold">
+                                            {order.title}
                                         </div>
 
-                                        <select
-                                            value={order.status}
-                                            onChange={(e) =>
-                                                handleStatusChange(order.id, e.target.value)
-                                            }
-                                            className="border px-2 py-1 rounded"
-                                        >
-                                            {statusOptions.map(s => (
-                                                <option key={s} value={s}>{s}</option>
-                                            ))}
-                                        </select>
+                                        <div className="text-sm text-gray-500">
+                                            Client: {order.client}
+                                        </div>
+
+                                        <div className="text-sm text-gray-500">
+                                            Deadline: {order.deadline}
+                                        </div>
+
                                     </div>
 
-                                    <div className="text-sm text-gray-600">
-                                        Deadline: {order.deadline || "—"}
-                                    </div>
-
-                                    <button
-                                        onClick={() => handleEdit(order)}
-                                        className="mt-3 bg-yellow-500 text-white px-3 py-1 rounded"
+                                    <select
+                                        value={order.status}
+                                        onChange={(e)=>updateStatus(order.id,e.target.value)}
+                                        className="border px-2 py-1 rounded"
                                     >
-                                        Edit
-                                    </button>
+                                        <option value="NEW">New</option>
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="COMPLETED">Completed</option>
+                                        <option value="CANCELLED">Cancelled</option>
+                                    </select>
 
                                 </div>
-                            ))}
-                        </div>
-                    )}
+
+                                {/* TASK LIST */}
+
+                                {order.tasks && order.tasks.length > 0 && (
+
+                                    <div className="text-sm">
+
+                                        <div className="font-medium">
+                                            Tasks
+                                        </div>
+
+                                        <ul className="list-disc ml-4">
+
+                                            {order.tasks.map(task => (
+                                                <li key={task.id}>
+                                                    {task.title} – {task.status}
+                                                </li>
+                                            ))}
+
+                                        </ul>
+
+                                    </div>
+
+                                )}
+
+                                {/* CREATE TASK */}
+
+                                <form
+                                    onSubmit={(e)=>{
+                                        setSelectedOrder(order.id);
+                                        createTask(e);
+                                    }}
+                                    className="flex gap-2"
+                                >
+
+                                    <input
+                                        value={taskTitle}
+                                        onChange={e=>setTaskTitle(e.target.value)}
+                                        placeholder="Task title"
+                                        className="border px-2 py-1 rounded flex-1"
+                                        required
+                                    />
+
+                                    <select
+                                        value={taskAssignee}
+                                        onChange={e=>setTaskAssignee(e.target.value)}
+                                        className="border px-2 py-1 rounded"
+                                        required
+                                    >
+                                        <option value="">Assign</option>
+
+                                        {employees.map(emp => (
+                                            <option
+                                                key={emp.id}
+                                                value={emp.id}
+                                            >
+                                                {emp.email}
+                                            </option>
+                                        ))}
+
+                                    </select>
+
+                                    <button className="bg-green-600 text-white px-3 rounded">
+                                        Add Task
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        ))}
+
+                    </div>
 
                 </div>
+
             </div>
         </>
     );
