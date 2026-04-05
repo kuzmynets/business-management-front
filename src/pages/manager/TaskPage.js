@@ -1,311 +1,231 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { apiRequest } from "../../api/client";
 import Toolbar from "../../components/Toolbar";
 
-export default function TasksPage() {
+export default function ManagerTasks() {
+
     const { user } = useContext(AuthContext);
 
-    const [tasks, setTasks] = useState([]);
-    const [orders, setOrders] = useState([]);
-    const [employees, setEmployees] = useState([]);
+    const [tasks,setTasks] = useState([]);
+    const [employees,setEmployees] = useState([]);
 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [statusFilter,setStatusFilter] = useState("");
+    const [assigneeFilter,setAssigneeFilter] = useState("");
 
-    const [statusFilter, setStatusFilter] = useState("");
-    const [orderFilter, setOrderFilter] = useState("");
-    const [assigneeFilter, setAssigneeFilter] = useState("");
+    const [loading,setLoading] = useState(true);
+    const [error,setError] = useState("");
 
-    const emptyForm = {
-        title: "",
-        description: "",
-        order_id: "",
-        assigned_to: "",
-        status: "NEW",
-        deadline: ""
-    };
-
-    const [form, setForm] = useState(emptyForm);
-    const [editingTask, setEditingTask] = useState(null);
-    const [showForm, setShowForm] = useState(false);
-
-    useEffect(() => {
+    useEffect(()=>{
         loadData();
-    }, [statusFilter, orderFilter, assigneeFilter]);
+    },[]);
 
     const loadData = async () => {
-        setLoading(true);
+
         try {
-            let query = [];
-            if (statusFilter) query.push(`status=${statusFilter}`);
-            if (orderFilter) query.push(`order_id=${orderFilter}`);
-            if (assigneeFilter) query.push(`assigned_to=${assigneeFilter}`);
 
-            const queryString = query.length ? `?${query.join("&")}` : "";
-
-            const [tasksData, ordersData, employeesData] = await Promise.all([
-                apiRequest(`/tasks${queryString}`),
-                apiRequest("/orders"),
+            const [tasksData, employeesData] = await Promise.all([
+                apiRequest("/tasks"),
                 apiRequest("/employees")
             ]);
 
             setTasks(Array.isArray(tasksData) ? tasksData : []);
-            setOrders(Array.isArray(ordersData) ? ordersData : []);
             setEmployees(Array.isArray(employeesData) ? employeesData : []);
+
         } catch {
-            setError("Failed to load data");
+            setError("Failed to load tasks");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+    const updateStatus = async (taskId,status) => {
 
-    const saveTask = async () => {
         try {
-            if (editingTask) {
-                await apiRequest(`/tasks/${editingTask.id}`, {
-                    method: "PUT",
-                    body: JSON.stringify(form)
-                });
-            } else {
-                await apiRequest("/tasks", {
-                    method: "POST",
-                    body: JSON.stringify(form)
-                });
-            }
 
-            setForm(emptyForm);
-            setEditingTask(null);
-            setShowForm(false);
-            loadData();
-        } catch {
-            setError("Failed to save task");
-        }
-    };
-
-    const handleEdit = (task) => {
-        setEditingTask(task);
-        setForm({
-            title: task.title || "",
-            description: task.description || "",
-            order_id: task.order_id || "",
-            assigned_to: task.assigned_to || "",
-            status: task.status || "NEW",
-            deadline: task.deadline || ""
-        });
-        setShowForm(true);
-    };
-
-    const updateStatus = async (taskId, status) => {
-        try {
-            await apiRequest(`/tasks/${taskId}/status`, {
-                method: "PATCH",
-                body: JSON.stringify({ status })
+            await apiRequest(`/tasks/${taskId}/status`,{
+                method:"PATCH",
+                body:JSON.stringify({status})
             });
-            loadData();
+
+            setTasks(prev =>
+                prev.map(t =>
+                    t.id === taskId ? {...t,status} : t
+                )
+            );
+
         } catch {
             setError("Failed to update status");
         }
+
     };
 
-    const statusOptions = ["NEW", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
+    const updateAssignee = async (taskId,assigned_to) => {
+
+        try {
+
+            await apiRequest(`/tasks/${taskId}/assign`,{
+                method:"PATCH",
+                body:JSON.stringify({assigned_to})
+            });
+
+            setTasks(prev =>
+                prev.map(t =>
+                    t.id === taskId ? {...t,assigned_to} : t
+                )
+            );
+
+        } catch {
+            setError("Failed to assign task");
+        }
+
+    };
+
+    const filteredTasks = tasks.filter(task => {
+
+        if(statusFilter && task.status !== statusFilter)
+            return false;
+
+        if(assigneeFilter && String(task.assigned_to) !== assigneeFilter)
+            return false;
+
+        return true;
+
+    });
+
+    if(loading) return <div className="p-6">Loading...</div>;
 
     return (
+
         <>
-            <Toolbar role={user.role} />
+            <Toolbar role={user.role}/>
 
             <div className="min-h-screen bg-gray-100 p-6">
-                <div className="max-w-6xl mx-auto space-y-6">
 
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold">Tasks Management</h1>
-                        <button
-                            onClick={() => {
-                                setEditingTask(null);
-                                setForm(emptyForm);
-                                setShowForm(true);
-                            }}
-                            className="bg-green-600 text-white px-4 py-2 rounded"
-                        >
-                            Create Task
-                        </button>
-                    </div>
+                <div className="max-w-7xl mx-auto space-y-6">
 
-                    {error && <div className="text-red-600">{error}</div>}
+                    <h1 className="text-2xl font-bold">
+                        Task Management
+                    </h1>
+
+                    {error && (
+                        <div className="text-red-600">
+                            {error}
+                        </div>
+                    )}
 
                     {/* FILTERS */}
-                    <div className="grid grid-cols-3 gap-4 bg-white p-4 rounded shadow">
+
+                    <div className="bg-white p-4 rounded shadow flex gap-4">
 
                         <select
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="border px-2 py-2 rounded"
+                            onChange={(e)=>setStatusFilter(e.target.value)}
+                            className="border px-3 py-2 rounded"
                         >
                             <option value="">All Statuses</option>
-                            {statusOptions.map(s => (
-                                <option key={s} value={s}>{s}</option>
-                            ))}
-                        </select>
-
-                        <select
-                            value={orderFilter}
-                            onChange={(e) => setOrderFilter(e.target.value)}
-                            className="border px-2 py-2 rounded"
-                        >
-                            <option value="">All Orders</option>
-                            {orders.map(o => (
-                                <option key={o.id} value={o.id}>{o.title}</option>
-                            ))}
+                            <option value="NEW">New</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="DONE">Done</option>
                         </select>
 
                         <select
                             value={assigneeFilter}
-                            onChange={(e) => setAssigneeFilter(e.target.value)}
-                            className="border px-2 py-2 rounded"
+                            onChange={(e)=>setAssigneeFilter(e.target.value)}
+                            className="border px-3 py-2 rounded"
                         >
+
                             <option value="">All Employees</option>
-                            {employees.map(emp => (
-                                <option key={emp.id} value={emp.id}>{emp.email}</option>
+
+                            {employees.map(emp=>(
+                                <option key={emp.id} value={emp.id}>
+                                    {emp.email}
+                                </option>
                             ))}
+
                         </select>
 
                     </div>
 
-                    {/* FORM */}
-                    {showForm && (
-                        <div className="bg-white p-6 rounded shadow space-y-4">
+                    {/* TASK LIST */}
 
-                            <input
-                                name="title"
-                                placeholder="Task title"
-                                value={form.title}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
+                    <div className="space-y-4">
 
-                            <textarea
-                                name="description"
-                                placeholder="Description"
-                                value={form.description}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
+                        {filteredTasks.map(task => (
 
-                            <select
-                                name="order_id"
-                                value={form.order_id}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
+                            <div
+                                key={task.id}
+                                className="bg-white p-4 rounded shadow"
                             >
-                                <option value="">Select Order</option>
-                                {orders.map(o => (
-                                    <option key={o.id} value={o.id}>{o.title}</option>
-                                ))}
-                            </select>
 
-                            <select
-                                name="assigned_to"
-                                value={form.assigned_to}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            >
-                                <option value="">Assign to Employee</option>
-                                {employees.map(emp => (
-                                    <option key={emp.id} value={emp.id}>{emp.email}</option>
-                                ))}
-                            </select>
+                                <div className="flex justify-between items-start">
 
-                            <select
-                                name="status"
-                                value={form.status}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            >
-                                {statusOptions.map(s => (
-                                    <option key={s} value={s}>{s}</option>
-                                ))}
-                            </select>
+                                    <div>
 
-                            <input
-                                type="date"
-                                name="deadline"
-                                value={form.deadline}
-                                onChange={handleChange}
-                                className="w-full border px-3 py-2 rounded"
-                            />
-
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={saveTask}
-                                    className="bg-blue-600 text-white px-4 py-2 rounded"
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    onClick={() => setShowForm(false)}
-                                    className="bg-gray-300 px-4 py-2 rounded"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-
-                        </div>
-                    )}
-
-                    {/* LIST */}
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : tasks.length === 0 ? (
-                        <div className="text-gray-500">No tasks</div>
-                    ) : (
-                        <div className="space-y-4">
-                            {tasks.map(task => (
-                                <div key={task.id} className="bg-white p-5 rounded shadow">
-
-                                    <div className="flex justify-between items-center">
-                                        <div>
-                                            <div className="font-semibold">{task.title}</div>
-                                            <div className="text-sm text-gray-500">
-                                                Order: {task.order_title || "—"} |
-                                                Assigned: {task.assigned_email || "—"}
-                                            </div>
+                                        <div className="font-semibold">
+                                            {task.title}
                                         </div>
+
+                                        <div className="text-sm text-gray-500">
+                                            Order: {task.order_title}
+                                        </div>
+
+                                        <div className="text-sm text-gray-500">
+                                            Deadline: {task.deadline}
+                                        </div>
+
+                                    </div>
+
+                                    <div className="flex gap-2">
 
                                         <select
                                             value={task.status}
-                                            onChange={(e) =>
-                                                updateStatus(task.id, e.target.value)
-                                            }
+                                            onChange={(e)=>updateStatus(task.id,e.target.value)}
                                             className="border px-2 py-1 rounded"
                                         >
-                                            {statusOptions.map(s => (
-                                                <option key={s} value={s}>{s}</option>
-                                            ))}
+                                            <option value="NEW">New</option>
+                                            <option value="IN_PROGRESS">In Progress</option>
+                                            <option value="DONE">Done</option>
                                         </select>
-                                    </div>
 
-                                    <div className="text-sm text-gray-600 mt-2">
-                                        Deadline: {task.deadline || "—"}
-                                    </div>
+                                        <select
+                                            value={task.assigned_to || ""}
+                                            onChange={(e)=>updateAssignee(task.id,e.target.value)}
+                                            className="border px-2 py-1 rounded"
+                                        >
 
-                                    <button
-                                        onClick={() => handleEdit(task)}
-                                        className="mt-3 bg-yellow-500 text-white px-3 py-1 rounded"
-                                    >
-                                        Edit
-                                    </button>
+                                            <option value="">
+                                                Unassigned
+                                            </option>
+
+                                            {employees.map(emp=>(
+                                                <option key={emp.id} value={emp.id}>
+                                                    {emp.email}
+                                                </option>
+                                            ))}
+
+                                        </select>
+
+                                    </div>
 
                                 </div>
-                            ))}
-                        </div>
-                    )}
+
+                            </div>
+
+                        ))}
+
+                        {filteredTasks.length === 0 && (
+                            <div className="text-gray-500 text-sm">
+                                No tasks found
+                            </div>
+                        )}
+
+                    </div>
 
                 </div>
+
             </div>
+
         </>
     );
 }
