@@ -20,8 +20,9 @@ import Subscribe from "./pages/owner/Subscribe";
 // MANAGER
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerOrders from "./pages/manager/Orders/ManagerOrdersPage";
-import ManagerTasks from "./pages/manager/TaskPage";
 import OrderDetails from "./pages/manager/Orders/OrderDetailsPage";
+import ManagerTasksPage from "./pages/manager/Tasks/TasksPage";
+import TaskDetailsPage from "./pages/manager/Tasks/TaskDetailsPage";
 
 // EMPLOYEE
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
@@ -77,7 +78,8 @@ export default function App() {
                                     <Route path="dashboard" element={<ManagerDashboard />} />
                                     <Route path="orders" element={<ManagerOrders />} />
                                     <Route path="orders/:id" element={<OrderDetails />} />
-                                    <Route path="tasks" element={<ManagerTasks />} />
+                                    <Route path="tasks" element={<ManagerTasksPage />} />
+                                    <Route path="tasks/:id" element={<TaskDetailsPage />} />
                                     <Route path="*" element={<Navigate to="dashboard" />} />
                                 </Routes>
                             </ProtectedRoute>
