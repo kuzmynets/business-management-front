@@ -1,0 +1,31 @@
+{
+  "login": {
+    "title": "Вхід",
+    "email": "Email",
+    "password": "Пароль",
+    "submit": "Увійти",
+    "loading": "Вхід...",
+    "error": "Помилка входу"
+  },
+
+  "registerOwner": {
+    "title": "Створення бізнесу",
+    "businessName": "Назва бізнесу",
+    "email": "Email",
+    "password": "Пароль",
+    "submit": "Створити",
+    "error": "Помилка реєстрації"
+  },
+
+  "logout": "Вихід",
+
+  "acceptInvite": {
+    "title": "Прийняти запрошення",
+    "email": "Email",
+    "password": "Новий пароль",
+    "submit": "Прийняти запрошення",
+    "loading": "Обробка...",
+    "errorInvalid": "Невірне або прострочене запрошення",
+    "errorAccept": "Помилка прийняття запрошення"
+  }
+}

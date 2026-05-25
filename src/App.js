@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./contexts/AuthContext";
 import { useContext } from "react";
+import "./i18n";
 
 // PUBLIC
 import { LandingPage } from "./pages/LandingPage";
@@ -12,7 +13,6 @@ import AcceptInvite from "./pages/AcceptInvite";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
 import Team from "./pages/owner/Team";
 import MyBusiness from "./pages/owner/MyBusiness";
-import OwnerOrdersPage from "./pages/owner/Orders";
 import Finance from "./pages/owner/Finance";
 import Analytic from "./pages/owner/Analytic";
 import Subscribe from "./pages/owner/Subscribe";
@@ -59,7 +59,6 @@ export default function App() {
                                     <Route path="dashboard" element={<OwnerDashboard />} />
                                     <Route path="business" element={<MyBusiness />} />
                                     <Route path="team" element={<Team />} />
-                                    <Route path="orders" element={<OwnerOrdersPage />} />
                                     <Route path="finance" element={<Finance />} />
                                     <Route path="analytic" element={<Analytic />} />
                                     <Route path="subscribe" element={<Subscribe />} />

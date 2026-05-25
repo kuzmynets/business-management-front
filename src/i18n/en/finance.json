@@ -1,0 +1,29 @@
+{
+  "title": "Finance",
+  "subtitle": "Income, expenses and profit overview",
+
+  "syncOrders": "Sync Orders",
+  "syncing": "Syncing...",
+  "addExpense": "Add Expense",
+
+  "expenseForm": "Add Expense",
+
+  "income": "Income",
+  "expenses": "Expenses",
+  "profit": "Profit",
+
+  "filtersAll": "All",
+  "allCategories": "All categories",
+  "incomeType": "Income",
+  "expenseType": "Expense",
+
+  "tableType": "Type",
+  "tableAmount": "Amount",
+  "tableCategory": "Category",
+  "tableOrder": "Order",
+  "tableDate": "Date",
+
+  "errorLoad": "Failed to load finance data",
+  "errorSync": "Failed to sync order transactions",
+  "errorExpense": "Failed to create expense"
+}

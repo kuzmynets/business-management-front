@@ -1,0 +1,22 @@
+{
+  "title": "Team",
+  "subtitle": "Manage invitations and team access",
+
+  "inviteTitle": "Invite user",
+  "emailPlaceholder": "Email",
+  "roleEmployee": "Employee",
+  "roleManager": "Manager",
+  "sendInvite": "Send invite",
+  "sending": "Sending...",
+
+  "invitesTitle": "Pending invites",
+  "invitesSubtitle": "Invitations that are not yet accepted",
+  "invitesEmpty": "No invites found",
+  "invitesLoading": "Loading...",
+
+  "role": "Role",
+  "status": "Status",
+
+  "errorLoad": "Failed to load invites",
+  "errorSend": "Failed to send invite"
+}

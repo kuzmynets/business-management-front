@@ -1,0 +1,381 @@
+{
+  "business_system": "Business System",
+  "dashboard": "Dashboard",
+  "business": "Business",
+  "finance": "Finance",
+  "team": "Team",
+  "analytics": "Analytics",
+  "subscription": "Subscription",
+  "orders": "Orders",
+  "tasks": "Tasks",
+
+  "team_page": {
+    "title": "Team",
+    "subtitle": "Manage invitations and team access",
+    "invite": {
+      "title": "Invite user",
+      "emailPlaceholder": "Email",
+      "roleEmployee": "Employee",
+      "roleManager": "Manager",
+      "send": "Send invite",
+      "sending": "Sending..."
+    },
+    "invites": {
+      "title": "Pending invites",
+      "subtitle": "Invitations that are not yet accepted",
+      "loading": "Loading...",
+      "empty": "No invites found",
+      "role": "Role",
+      "statusPrefix": "Status"
+    },
+    "errors": {
+      "load": "Failed to load invites",
+      "send": "Failed to send invite"
+    },
+    "status": {
+      "pending": "PENDING",
+      "accepted": "ACCEPTED"
+    }
+  },
+
+  "tasks_status": {
+    "status_pending": "Pending",
+    "status_in_progress": "In progress",
+    "status_done": "Done",
+    "in_progress": "Start",
+    "done": "Complete",
+    "deadline": "Deadline"
+  },
+
+  "subscription_page": {
+    "title": "Subscription",
+    "loading": "Loading...",
+    "errorLoad": "Failed to load subscription info",
+    "errorSubscribe": "Failed to subscribe",
+    "current": {
+      "title": "Current Plan",
+      "plan": "Plan",
+      "status": "Status",
+      "nextBilling": "Next billing",
+      "empty": "No active subscription"
+    },
+    "plans": {
+      "title": "Choose a Plan",
+      "empty": "No plans available",
+      "subscribe": "Subscribe",
+      "currencyInterval": "/"
+    }
+  },
+
+  "register_owner": {
+    "title": "Create business",
+    "form": {
+      "businessName": "Business name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create"
+    },
+    "error": {
+      "default": "Registration failed"
+    }
+  },
+
+  "orders_common": {
+    "common": {
+      "loading": "Loading...",
+      "back": "Back",
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "orders": {
+      "details": "Order Details",
+      "title": "Title",
+      "description": "Description",
+      "budget": "Budget",
+      "deadline": "Deadline",
+      "status": "Status",
+      "client": "Client",
+      "loadError": "Failed to load order",
+      "saveError": "Failed to save changes",
+      "notFound": "Order not found",
+      "confirmTitle": "Confirm changes",
+      "confirmText": "Apply updates to this order?"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "newTask": "New task",
+      "add": "Add",
+      "createError": "Failed to create task"
+    }
+  },
+
+  "my_business": {
+    "title": "My Business",
+    "subtitle": "Manage your company profile",
+    "sections": {
+      "companyInfo": {
+        "title": "Company Information",
+        "subtitle": "Basic information about your business",
+        "name": "Company Name",
+        "logo": "Logo URL",
+        "registered": "Registered"
+      },
+      "subscription": {
+        "title": "Subscription",
+        "subtitle": "Current business subscription plan",
+        "upgrade": "Upgrade Subscription",
+        "plans": {
+          "free": "FREE",
+          "premium": "PREMIUM"
+        }
+      },
+      "danger": {
+        "title": "Danger Zone",
+        "subtitle": "These actions are irreversible",
+        "deactivate": "Deactivate Business",
+        "delete": "Delete Business"
+      }
+    },
+    "buttons": {
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "modals": {
+      "save": {
+        "title": "Save Changes",
+        "text": "Apply changes to business settings?"
+      },
+      "deactivate": {
+        "title": "Deactivate Business",
+        "text": "Business will become inaccessible."
+      },
+      "delete": {
+        "title": "Delete Business",
+        "text": "This action permanently deletes all business data."
+      }
+    },
+    "errors": {
+      "load": "Failed to load business",
+      "update": "Failed to update business",
+      "deactivate": "Failed to deactivate business",
+      "delete": "Failed to delete business"
+    },
+    "success": {
+      "updated": "Business updated successfully"
+    }
+  },
+
+  "manager_dashboard": {
+    "title": "Manager Control Center",
+    "common": {
+      "loading": "Loading..."
+    },
+    "errors": {
+      "load": "Failed to load dashboard"
+    },
+    "critical": {
+      "title": "Critical Issues",
+      "empty": "No critical issues",
+      "types": {
+        "order": "ORDER",
+        "task": "TASK"
+      }
+    },
+    "active": {
+      "title": "Active Operations",
+      "order": "Order",
+      "task": "Task"
+    },
+    "stats": {
+      "activeOrders": "Active Orders",
+      "critical": "Critical",
+      "tasks": "Tasks"
+    }
+  },
+
+  "orders_page": {
+    "common": {
+      "loading": "Loading..."
+    },
+    "errors": {
+      "load_failed": "Failed to load data",
+      "create_failed": "Failed to create",
+      "status_update_failed": "Failed to update status"
+    },
+    "orders": {
+      "title": "Orders",
+      "actions": {
+        "create": "Create"
+      },
+      "fields": {
+        "title": "Title",
+        "select_client": "Select client",
+        "new_client": "New client",
+        "budget": "Budget",
+        "description": "Description"
+      },
+      "status": {
+        "NEW": "New",
+        "IN_PROGRESS": "In progress",
+        "REVIEW": "Review",
+        "COMPLETED": "Completed"
+      }
+    }
+  },
+
+  "logout": "Logout",
+
+  "login": {
+    "title": "Login",
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "loading": "Signing in..."
+    },
+    "error": {
+      "default": "Login failed"
+    }
+  },
+
+  "landing": {
+    "hero": {
+      "title": "Manage your business without chaos",
+      "subtitle": "A system for orders, tasks, and team management in one place. Process control without spreadsheets and scattered tools.",
+      "ctaRegister": "Create business",
+      "ctaLogin": "Log in"
+    },
+    "features": {
+      "owner": {
+        "title": "Owner",
+        "text": "Business control, finance, analytics, team, subscriptions."
+      },
+      "manager": {
+        "title": "Manager",
+        "text": "Order management, tasks, and operational workflow."
+      },
+      "employee": {
+        "title": "Employee",
+        "text": "Task execution, statuses, work result tracking."
+      }
+    },
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "Choose a plan for your business",
+      "free": {
+        "title": "Free",
+        "text": "Basic order and task management.",
+        "price": "0$"
+      },
+      "pro": {
+        "title": "Pro",
+        "text": "Analytics, finance, advanced process control.",
+        "price": "20$ / month"
+      }
+    }
+  },
+
+  "finance": {
+    "title": "Finance",
+    "subtitle": "Income, expenses and profit overview",
+    "buttons": {
+      "syncOrders": "Sync Orders",
+      "syncing": "Syncing...",
+      "addExpense": "Add Expense",
+      "saving": "Saving..."
+    },
+    "sections": {
+      "expenseForm": "Add Expense",
+      "balance": {
+        "income": "Income",
+        "expenses": "Expenses",
+        "profit": "Profit"
+      }
+    },
+    "filters": {
+      "all": "All",
+      "allCategories": "All categories",
+      "type": {
+        "income": "Income",
+        "expense": "Expense"
+      }
+    },
+    "table": {
+      "type": "Type",
+      "amount": "Amount",
+      "category": "Category",
+      "order": "Order",
+      "date": "Date"
+    },
+    "errors": {
+      "load": "Failed to load finance data",
+      "sync": "Failed to sync order transactions",
+      "expense": "Failed to create expense"
+    }
+  },
+
+  "my_tasks": {
+    "title": "My Tasks",
+    "active": "Active",
+    "completed": "Completed",
+    "start": "Start",
+    "pause": "Pause",
+    "complete": "Complete",
+    "deadline": "Deadline",
+    "loading": "Loading...",
+    "failed_load_tasks": "Failed to load tasks",
+    "no_description": "No description"
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "loading": "Loading...",
+    "errorLoad": "Failed to load dashboard",
+    "cards": {
+      "revenue": "Revenue",
+      "profit": "Profit"
+    },
+    "activity": {
+      "title": "Recent Activities",
+      "empty": "No activities",
+      "fallback": "Activity"
+    }
+  },
+
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Revenue trends, performance and bottlenecks",
+    "roleFilter": "Role Filter",
+    "roleAll": "All",
+    "roleManagers": "Managers",
+    "roleEmployees": "Employees",
+    "sections": {
+      "revenue": "Revenue Dynamics",
+      "performance": "Team Performance",
+      "bottlenecks": "Process Bottlenecks"
+    },
+    "empty": "No data",
+    "subscription": {
+      "title": "Premium Feature",
+      "description": "Analytics are available only for businesses with an active premium subscription.",
+      "button": "Upgrade Subscription"
+    }
+  },
+
+  "accept_invite": {
+    "title": "Accept Invite",
+    "loading": "Processing...",
+    "error": {
+      "invalid": "Invalid or expired invitation",
+      "accept": "Failed to accept invite"
+    },
+    "form": {
+      "email": "Email",
+      "password": "New Password",
+      "submit": "Accept Invite"
+    }
+  }
+}

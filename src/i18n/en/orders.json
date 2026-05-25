@@ -1,0 +1,19 @@
+{
+  "title": "Orders",
+  "create": "Create",
+
+  "titleField": "Title",
+  "clientSelect": "Select client",
+  "newClient": "New client",
+  "budget": "Budget",
+  "description": "Description",
+
+  "statusNew": "New",
+  "statusInProgress": "In progress",
+  "statusReview": "Review",
+  "statusCompleted": "Completed",
+
+  "errorLoad": "Failed to load orders",
+  "errorCreate": "Failed to create",
+  "errorUpdateStatus": "Failed to update status"
+}

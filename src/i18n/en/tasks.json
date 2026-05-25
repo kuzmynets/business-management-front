@@ -1,0 +1,15 @@
+{
+  "title": "My Tasks",
+  "active": "Active",
+  "completed": "Completed",
+
+  "start": "Start",
+  "pause": "Pause",
+  "complete": "Complete",
+
+  "deadline": "Deadline",
+  "noDescription": "No description",
+
+  "loading": "Loading...",
+  "errorLoad": "Failed to load tasks"
+}

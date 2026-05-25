@@ -1,0 +1,10 @@
+{
+  "dashboard": "Dashboard",
+  "business": "Business",
+  "finance": "Finance",
+  "team": "Team",
+  "analytics": "Analytics",
+  "subscription": "Subscription",
+  "orders": "Orders",
+  "tasks": "Tasks"
+}

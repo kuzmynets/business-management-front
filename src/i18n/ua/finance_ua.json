@@ -1,0 +1,29 @@
+{
+  "title": "Фінанси",
+  "subtitle": "Дохід, витрати та прибуток",
+
+  "syncOrders": "Синхронізувати замовлення",
+  "syncing": "Синхронізація...",
+  "addExpense": "Додати витрату",
+
+  "expenseForm": "Додати витрату",
+
+  "income": "Дохід",
+  "expenses": "Витрати",
+  "profit": "Прибуток",
+
+  "filtersAll": "Усі",
+  "allCategories": "Усі категорії",
+  "incomeType": "Дохід",
+  "expenseType": "Витрата",
+
+  "tableType": "Тип",
+  "tableAmount": "Сума",
+  "tableCategory": "Категорія",
+  "tableOrder": "Замовлення",
+  "tableDate": "Дата",
+
+  "errorLoad": "Помилка завантаження фінансів",
+  "errorSync": "Помилка синхронізації замовлень",
+  "errorExpense": "Помилка створення витрати"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Dashboard",
+  "revenue": "Revenue",
+  "profit": "Profit",
+
+  "activityTitle": "Recent Activities",
+  "activityEmpty": "No activities",
+  "activityFallback": "Activity",
+
+  "errorLoad": "Failed to load dashboard"
+}

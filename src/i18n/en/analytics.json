@@ -1,0 +1,19 @@
+{
+  "title": "Analytics",
+  "subtitle": "Revenue trends, performance and bottlenecks",
+
+  "roleFilter": "Role Filter",
+  "roleAll": "All",
+  "roleManagers": "Managers",
+  "roleEmployees": "Employees",
+
+  "revenue": "Revenue Dynamics",
+  "performance": "Team Performance",
+  "bottlenecks": "Process Bottlenecks",
+
+  "empty": "No data",
+
+  "premiumTitle": "Premium Feature",
+  "premiumText": "Analytics are available only with premium subscription.",
+  "upgrade": "Upgrade Subscription"
+}

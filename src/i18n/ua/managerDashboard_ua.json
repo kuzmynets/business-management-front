@@ -1,0 +1,18 @@
+{
+  "title": "Центр керування",
+
+  "criticalTitle": "Критичні проблеми",
+  "criticalEmpty": "Немає критичних проблем",
+  "criticalOrder": "ЗАМОВЛЕННЯ",
+  "criticalTask": "ЗАВДАННЯ",
+
+  "activeTitle": "Активні процеси",
+  "activeOrder": "Замовлення",
+  "activeTask": "Задача",
+
+  "statsActiveOrders": "Активні замовлення",
+  "statsCritical": "Критичні",
+  "statsTasks": "Задачі",
+
+  "errorLoad": "Помилка завантаження панелі"
+}

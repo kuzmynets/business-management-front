@@ -1,0 +1,19 @@
+{
+  "title": "Замовлення",
+  "create": "Створити",
+
+  "titleField": "Назва",
+  "clientSelect": "Оберіть клієнта",
+  "newClient": "Новий клієнт",
+  "budget": "Бюджет",
+  "description": "Опис",
+
+  "statusNew": "Нове",
+  "statusInProgress": "В процесі",
+  "statusReview": "На перевірці",
+  "statusCompleted": "Завершено",
+
+  "errorLoad": "Помилка завантаження",
+  "errorCreate": "Помилка створення",
+  "errorUpdateStatus": "Помилка оновлення статусу"
+}

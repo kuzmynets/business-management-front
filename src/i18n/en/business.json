@@ -1,0 +1,38 @@
+{
+  "title": "My Business",
+  "subtitle": "Manage your company profile",
+
+  "companyTitle": "Company Information",
+  "companySubtitle": "Basic information about your business",
+  "companyName": "Company Name",
+  "logo": "Logo URL",
+  "registered": "Registered",
+
+  "subscriptionTitle": "Subscription",
+  "subscriptionSubtitle": "Current business subscription plan",
+  "upgrade": "Upgrade Subscription",
+  "free": "FREE",
+  "premium": "PREMIUM",
+
+  "dangerTitle": "Danger Zone",
+  "dangerSubtitle": "These actions are irreversible",
+  "deactivate": "Deactivate Business",
+  "delete": "Delete Business",
+
+  "save": "Save Changes",
+  "saving": "Saving...",
+
+  "modalSaveTitle": "Save Changes",
+  "modalSaveText": "Apply changes to business settings?",
+  "modalDeactivateTitle": "Deactivate Business",
+  "modalDeactivateText": "Business will become inaccessible.",
+  "modalDeleteTitle": "Delete Business",
+  "modalDeleteText": "This action permanently deletes all business data.",
+
+  "errorLoad": "Failed to load business",
+  "errorUpdate": "Failed to update business",
+  "errorDeactivate": "Failed to deactivate business",
+  "errorDelete": "Failed to delete business",
+
+  "successUpdated": "Business updated successfully"
+}

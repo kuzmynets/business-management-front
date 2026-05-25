@@ -1,0 +1,11 @@
+{
+  "title": "Панель керування",
+  "revenue": "Дохід",
+  "profit": "Прибуток",
+
+  "activityTitle": "Останні дії",
+  "activityEmpty": "Немає активності",
+  "activityFallback": "Подія",
+
+  "errorLoad": "Помилка завантаження панелі"
+}

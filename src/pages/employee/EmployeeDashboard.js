@@ -2,9 +2,11 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "../../api/client";
 import { AuthContext } from "../../contexts/AuthContext";
 import Toolbar from "../../components/Toolbar";
+import { useTranslation } from "react-i18next";
 
 export default function EmployeeDashboard() {
     const { user } = useContext(AuthContext);
+    const { t } = useTranslation();
 
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ export default function EmployeeDashboard() {
             const data = await apiRequest("/employee/tasks/my");
             setTasks(Array.isArray(data) ? data : []);
         } catch {
-            setError("Failed to load tasks");
+            setError(t("failed_load_tasks"));
         } finally {
             setLoading(false);
         }
@@ -59,22 +61,23 @@ export default function EmployeeDashboard() {
             </div>
 
             <div className="text-sm text-gray-600">
-                {task.description || "No description"}
+                {task.description || t("no_description")}
             </div>
 
             {task.deadline && (
                 <div className="text-sm text-red-500">
-                    Deadline: {new Date(task.deadline).toLocaleDateString()}
+                    {t("deadline")}: {new Date(task.deadline).toLocaleDateString()}
                 </div>
             )}
 
             <div className="flex gap-2">
+
                 {task.status !== "IN_PROGRESS" && task.status !== "DONE" && (
                     <button
                         onClick={() => updateStatus(task.id, "IN_PROGRESS")}
                         className="px-3 py-1 bg-yellow-500 text-white rounded text-sm"
                     >
-                        Start
+                        {t("start")}
                     </button>
                 )}
 
@@ -83,7 +86,7 @@ export default function EmployeeDashboard() {
                         onClick={() => updateStatus(task.id, "PAUSED")}
                         className="px-3 py-1 bg-gray-500 text-white rounded text-sm"
                     >
-                        Pause
+                        {t("pause")}
                     </button>
                 )}
 
@@ -92,14 +95,15 @@ export default function EmployeeDashboard() {
                         onClick={() => updateStatus(task.id, "DONE")}
                         className="px-3 py-1 bg-green-600 text-white rounded text-sm"
                     >
-                        Complete
+                        {t("complete")}
                     </button>
                 )}
+
             </div>
         </div>
     );
 
-    if (loading) return <div className="p-6">Loading...</div>;
+    if (loading) return <div className="p-6">{t("loading")}</div>;
 
     return (
         <>
@@ -108,11 +112,14 @@ export default function EmployeeDashboard() {
             <div className="min-h-screen bg-gray-100 p-6">
                 <div className="max-w-5xl mx-auto space-y-6">
 
-                    <h1 className="text-2xl font-bold">My Tasks</h1>
+                    <h1 className="text-2xl font-bold">
+                        {t("my_tasks")}
+                    </h1>
 
                     {error && <div className="text-red-600">{error}</div>}
 
                     <div className="flex gap-2">
+
                         <button
                             onClick={() => setTab("ACTIVE")}
                             className={`px-4 py-2 rounded ${
@@ -121,7 +128,7 @@ export default function EmployeeDashboard() {
                                     : "bg-white"
                             }`}
                         >
-                            Active
+                            {t("active")}
                         </button>
 
                         <button
@@ -132,18 +139,14 @@ export default function EmployeeDashboard() {
                                     : "bg-white"
                             }`}
                         >
-                            Completed
+                            {t("completed")}
                         </button>
+
                     </div>
 
                     <div className="space-y-4">
-                        {tab === "ACTIVE" &&
-                            activeTasks.map(renderTask)
-                        }
-
-                        {tab === "DONE" &&
-                            doneTasks.map(renderTask)
-                        }
+                        {tab === "ACTIVE" && activeTasks.map(renderTask)}
+                        {tab === "DONE" && doneTasks.map(renderTask)}
                     </div>
 
                 </div>

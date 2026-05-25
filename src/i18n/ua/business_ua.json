@@ -1,0 +1,38 @@
+{
+  "title": "Мій бізнес",
+  "subtitle": "Керування профілем компанії",
+
+  "companyTitle": "Інформація про компанію",
+  "companySubtitle": "Базова інформація",
+  "companyName": "Назва компанії",
+  "logo": "URL логотипу",
+  "registered": "Дата реєстрації",
+
+  "subscriptionTitle": "Підписка",
+  "subscriptionSubtitle": "Поточний тариф",
+  "upgrade": "Оновити підписку",
+  "free": "БЕЗКОШТОВНО",
+  "premium": "ПРЕМІУМ",
+
+  "dangerTitle": "Небезпечна зона",
+  "dangerSubtitle": "Дії незворотні",
+  "deactivate": "Деактивувати бізнес",
+  "delete": "Видалити бізнес",
+
+  "save": "Зберегти зміни",
+  "saving": "Збереження...",
+
+  "modalSaveTitle": "Збереження змін",
+  "modalSaveText": "Застосувати зміни до бізнесу?",
+  "modalDeactivateTitle": "Деактивація бізнесу",
+  "modalDeactivateText": "Бізнес стане недоступним.",
+  "modalDeleteTitle": "Видалення бізнесу",
+  "modalDeleteText": "Всі дані будуть видалені назавжди.",
+
+  "errorLoad": "Помилка завантаження бізнесу",
+  "errorUpdate": "Помилка оновлення",
+  "errorDeactivate": "Помилка деактивації",
+  "errorDelete": "Помилка видалення",
+
+  "successUpdated": "Бізнес оновлено"
+}

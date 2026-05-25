@@ -1,0 +1,18 @@
+{
+  "title": "Manager Control Center",
+
+  "criticalTitle": "Critical Issues",
+  "criticalEmpty": "No critical issues",
+  "criticalOrder": "ORDER",
+  "criticalTask": "TASK",
+
+  "activeTitle": "Active Operations",
+  "activeOrder": "Order",
+  "activeTask": "Task",
+
+  "statsActiveOrders": "Active Orders",
+  "statsCritical": "Critical",
+  "statsTasks": "Tasks",
+
+  "errorLoad": "Failed to load dashboard"
+}

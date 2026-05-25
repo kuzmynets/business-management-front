@@ -1,0 +1,22 @@
+{
+  "title": "Команда",
+  "subtitle": "Керування запрошеннями та доступами",
+
+  "inviteTitle": "Запросити користувача",
+  "emailPlaceholder": "Email",
+  "roleEmployee": "Працівник",
+  "roleManager": "Менеджер",
+  "sendInvite": "Надіслати запрошення",
+  "sending": "Надсилання...",
+
+  "invitesTitle": "Очікують підтвердження",
+  "invitesSubtitle": "Запрошення, які ще не прийняті",
+  "invitesEmpty": "Запрошень немає",
+  "invitesLoading": "Завантаження...",
+
+  "role": "Роль",
+  "status": "Статус",
+
+  "errorLoad": "Помилка завантаження запрошень",
+  "errorSend": "Помилка відправки запрошення"
+}

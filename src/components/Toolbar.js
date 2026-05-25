@@ -70,7 +70,7 @@ export default function Toolbar({ role }) {
                 )}
 
                 {role === "EMPLOYEE" && (
-                    <Link className="hover:text-white" to="/employee/dashboard">Tasks</Link>
+                    <Link className="hover:text-white" to="/employee/tasks">Tasks</Link>
                 )}
             </nav>
 
