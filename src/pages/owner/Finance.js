@@ -4,13 +4,13 @@ import { apiRequest } from "../../api/client";
 import Toolbar from "../../components/Toolbar";
 
 export default function Finance() {
-
     const { user } = useContext(AuthContext);
 
     const [transactions, setTransactions] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [syncLoading, setSyncLoading] = useState(false);
+    const [expenseLoading, setExpenseLoading] = useState(false);
     const [error, setError] = useState("");
 
     const [typeFilter, setTypeFilter] = useState("");
@@ -18,24 +18,23 @@ export default function Finance() {
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
 
+    const [expenseForm, setExpenseForm] = useState({
+        amount: "",
+        category: "",
+        description: ""
+    });
+
     useEffect(() => {
         loadFinance();
     }, []);
 
     const loadFinance = async () => {
-
         try {
-
             setLoading(true);
 
             const data = await apiRequest("/finance");
 
-            setTransactions(
-                Array.isArray(data?.transactions)
-                    ? data.transactions
-                    : []
-            );
-
+            setTransactions(Array.isArray(data) ? data : []);
         } catch {
             setError("Failed to load finance data");
         } finally {
@@ -44,9 +43,7 @@ export default function Finance() {
     };
 
     const syncOrders = async () => {
-
         try {
-
             setSyncLoading(true);
 
             await apiRequest("/finance/sync-orders", {
@@ -54,7 +51,6 @@ export default function Finance() {
             });
 
             await loadFinance();
-
         } catch {
             setError("Failed to sync order transactions");
         } finally {
@@ -62,376 +58,228 @@ export default function Finance() {
         }
     };
 
+    const createExpense = async (e) => {
+        e.preventDefault();
+
+        try {
+            setExpenseLoading(true);
+
+            await apiRequest("/finance/expense", {
+                method: "POST",
+                body: JSON.stringify({
+                    amount: Number(expenseForm.amount),
+                    category: expenseForm.category,
+                    description: expenseForm.description
+                })
+            });
+
+            setExpenseForm({
+                amount: "",
+                category: "",
+                description: ""
+            });
+
+            await loadFinance();
+
+        } catch {
+            setError("Failed to create expense");
+        } finally {
+            setExpenseLoading(false);
+        }
+    };
+
     const filteredTransactions = useMemo(() => {
+        return transactions.filter(t => {
+            if (typeFilter && t.type !== typeFilter) return false;
+            if (categoryFilter && t.category !== categoryFilter) return false;
 
-        return transactions.filter(transaction => {
-
-            if (
-                typeFilter &&
-                transaction.type !== typeFilter
-            ) {
-                return false;
-            }
-
-            if (
-                categoryFilter &&
-                transaction.category !== categoryFilter
-            ) {
-                return false;
-            }
-
-            if (
-                dateFrom &&
-                transaction.date &&
-                new Date(transaction.date) < new Date(dateFrom)
-            ) {
-                return false;
-            }
-
-            if (
-                dateTo &&
-                transaction.date &&
-                new Date(transaction.date) > new Date(dateTo)
-            ) {
-                return false;
-            }
+            if (dateFrom && t.date && new Date(t.date) < new Date(dateFrom)) return false;
+            if (dateTo && t.date && new Date(t.date) > new Date(dateTo)) return false;
 
             return true;
-
         });
-
-    }, [
-        transactions,
-        typeFilter,
-        categoryFilter,
-        dateFrom,
-        dateTo
-    ]);
+    }, [transactions, typeFilter, categoryFilter, dateFrom, dateTo]);
 
     const income = filteredTransactions
         .filter(t => t.type === "INCOME")
-        .reduce((acc, t) => acc + Number(t.amount || 0), 0);
+        .reduce((a, b) => a + Number(b.amount || 0), 0);
 
     const expenses = filteredTransactions
         .filter(t => t.type === "EXPENSE")
-        .reduce((acc, t) => acc + Number(t.amount || 0), 0);
+        .reduce((a, b) => a + Number(b.amount || 0), 0);
 
     const profit = income - expenses;
 
-    const categories = [
-        ...new Set(
-            transactions
-                .map(t => t.category)
-                .filter(Boolean)
-        )
-    ];
+    const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
 
-    if (loading) {
-        return <div className="p-6">Loading...</div>;
-    }
+    if (loading) return <div className="p-6">Loading...</div>;
 
     return (
         <>
             <Toolbar role={user.role} />
 
             <div className="min-h-screen bg-gray-100 p-6">
-
                 <div className="max-w-7xl mx-auto space-y-6">
 
                     {/* HEADER */}
-
                     <div className="flex items-center justify-between">
-
                         <div>
-
-                            <h1 className="text-3xl font-bold">
-                                Finance
-                            </h1>
-
+                            <h1 className="text-3xl font-bold">Finance</h1>
                             <p className="text-gray-500 mt-1">
                                 Income, expenses and profit overview
                             </p>
-
                         </div>
 
                         <button
                             onClick={syncOrders}
                             disabled={syncLoading}
-                            className={`px-4 py-2 rounded-lg text-white ${
-                                syncLoading
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-blue-600 hover:bg-blue-700"
-                            }`}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                         >
-                            {syncLoading
-                                ? "Syncing..."
-                                : "Sync Orders"}
+                            {syncLoading ? "Syncing..." : "Sync Orders"}
                         </button>
-
                     </div>
 
                     {error && (
-                        <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl">
+                        <div className="bg-red-100 text-red-700 p-3 rounded">
                             {error}
                         </div>
                     )}
 
+                    {/* CREATE EXPENSE */}
+                    <form
+                        onSubmit={createExpense}
+                        className="bg-white p-5 rounded shadow space-y-3"
+                    >
+                        <h2 className="font-semibold">Add Expense</h2>
+
+                        <input
+                            type="number"
+                            placeholder="Amount"
+                            value={expenseForm.amount}
+                            onChange={e =>
+                                setExpenseForm({ ...expenseForm, amount: e.target.value })
+                            }
+                            className="w-full border px-3 py-2 rounded"
+                        />
+
+                        <input
+                            placeholder="Category"
+                            value={expenseForm.category}
+                            onChange={e =>
+                                setExpenseForm({ ...expenseForm, category: e.target.value })
+                            }
+                            className="w-full border px-3 py-2 rounded"
+                        />
+
+                        <input
+                            placeholder="Description"
+                            value={expenseForm.description}
+                            onChange={e =>
+                                setExpenseForm({ ...expenseForm, description: e.target.value })
+                            }
+                            className="w-full border px-3 py-2 rounded"
+                        />
+
+                        <button
+                            disabled={expenseLoading}
+                            className="bg-red-600 text-white px-4 py-2 rounded"
+                        >
+                            {expenseLoading ? "Saving..." : "Add Expense"}
+                        </button>
+                    </form>
+
                     {/* BALANCE */}
-
                     <div className="grid md:grid-cols-3 gap-4">
-
-                        <div className="bg-white rounded-2xl shadow p-6">
-
-                            <div className="text-sm text-gray-500">
-                                Total Income
-                            </div>
-
-                            <div className="text-3xl font-bold text-green-600 mt-2">
+                        <div className="bg-white p-6 rounded shadow">
+                            <div className="text-gray-500">Income</div>
+                            <div className="text-2xl text-green-600 font-bold">
                                 ${income.toFixed(2)}
                             </div>
-
                         </div>
 
-                        <div className="bg-white rounded-2xl shadow p-6">
-
-                            <div className="text-sm text-gray-500">
-                                Total Expenses
-                            </div>
-
-                            <div className="text-3xl font-bold text-red-600 mt-2">
+                        <div className="bg-white p-6 rounded shadow">
+                            <div className="text-gray-500">Expenses</div>
+                            <div className="text-2xl text-red-600 font-bold">
                                 ${expenses.toFixed(2)}
                             </div>
-
                         </div>
 
-                        <div className="bg-white rounded-2xl shadow p-6">
-
-                            <div className="text-sm text-gray-500">
-                                Profit
-                            </div>
-
-                            <div className={`text-3xl font-bold mt-2 ${
-                                profit >= 0
-                                    ? "text-blue-600"
-                                    : "text-red-600"
-                            }`}>
+                        <div className="bg-white p-6 rounded shadow">
+                            <div className="text-gray-500">Profit</div>
+                            <div className="text-2xl font-bold">
                                 ${profit.toFixed(2)}
                             </div>
-
                         </div>
-
                     </div>
 
                     {/* FILTERS */}
+                    <div className="bg-white p-4 rounded shadow grid md:grid-cols-4 gap-3">
+                        <select
+                            value={typeFilter}
+                            onChange={e => setTypeFilter(e.target.value)}
+                            className="border px-3 py-2 rounded"
+                        >
+                            <option value="">All</option>
+                            <option value="INCOME">Income</option>
+                            <option value="EXPENSE">Expense</option>
+                        </select>
 
-                    <div className="bg-white rounded-2xl shadow p-5">
+                        <select
+                            value={categoryFilter}
+                            onChange={e => setCategoryFilter(e.target.value)}
+                            className="border px-3 py-2 rounded"
+                        >
+                            <option value="">All categories</option>
+                            {categories.map(c => (
+                                <option key={c} value={c}>{c}</option>
+                            ))}
+                        </select>
 
-                        <div className="grid md:grid-cols-4 gap-4">
+                        <input
+                            type="date"
+                            value={dateFrom}
+                            onChange={e => setDateFrom(e.target.value)}
+                            className="border px-3 py-2 rounded"
+                        />
 
-                            <div>
-
-                                <label className="block text-sm text-gray-500 mb-1">
-                                    Transaction Type
-                                </label>
-
-                                <select
-                                    value={typeFilter}
-                                    onChange={(e) => setTypeFilter(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2"
-                                >
-                                    <option value="">
-                                        All
-                                    </option>
-
-                                    <option value="INCOME">
-                                        Income
-                                    </option>
-
-                                    <option value="EXPENSE">
-                                        Expense
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                            <div>
-
-                                <label className="block text-sm text-gray-500 mb-1">
-                                    Category
-                                </label>
-
-                                <select
-                                    value={categoryFilter}
-                                    onChange={(e) => setCategoryFilter(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2"
-                                >
-                                    <option value="">
-                                        All
-                                    </option>
-
-                                    {categories.map(category => (
-                                        <option
-                                            key={category}
-                                            value={category}
-                                        >
-                                            {category}
-                                        </option>
-                                    ))}
-
-                                </select>
-
-                            </div>
-
-                            <div>
-
-                                <label className="block text-sm text-gray-500 mb-1">
-                                    Date From
-                                </label>
-
-                                <input
-                                    type="date"
-                                    value={dateFrom}
-                                    onChange={(e) => setDateFrom(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2"
-                                />
-
-                            </div>
-
-                            <div>
-
-                                <label className="block text-sm text-gray-500 mb-1">
-                                    Date To
-                                </label>
-
-                                <input
-                                    type="date"
-                                    value={dateTo}
-                                    onChange={(e) => setDateTo(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2"
-                                />
-
-                            </div>
-
-                        </div>
-
+                        <input
+                            type="date"
+                            value={dateTo}
+                            onChange={e => setDateTo(e.target.value)}
+                            className="border px-3 py-2 rounded"
+                        />
                     </div>
 
-                    {/* TRANSACTIONS */}
+                    {/* TABLE */}
+                    <div className="bg-white rounded shadow overflow-hidden">
+                        <table className="w-full">
+                            <thead className="bg-gray-50">
+                            <tr>
+                                <th className="p-3 text-left">Type</th>
+                                <th className="p-3 text-left">Amount</th>
+                                <th className="p-3 text-left">Category</th>
+                                <th className="p-3 text-left">Order</th>
+                                <th className="p-3 text-left">Date</th>
+                            </tr>
+                            </thead>
 
-                    <div className="bg-white rounded-2xl shadow overflow-hidden">
-
-                        <div className="p-5 border-b flex items-center justify-between">
-
-                            <div>
-
-                                <h2 className="text-xl font-semibold">
-                                    Transactions
-                                </h2>
-
-                                <div className="text-sm text-gray-500 mt-1">
-                                    {filteredTransactions.length} operations found
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        {filteredTransactions.length === 0 ? (
-
-                            <div className="p-6 text-gray-500">
-                                No transactions found
-                            </div>
-
-                        ) : (
-
-                            <div className="overflow-x-auto">
-
-                                <table className="w-full">
-
-                                    <thead className="bg-gray-50 border-b">
-
-                                    <tr className="text-left text-sm text-gray-500">
-
-                                        <th className="px-5 py-4">
-                                            Type
-                                        </th>
-
-                                        <th className="px-5 py-4">
-                                            Amount
-                                        </th>
-
-                                        <th className="px-5 py-4">
-                                            Category
-                                        </th>
-
-                                        <th className="px-5 py-4">
-                                            Related Order
-                                        </th>
-
-                                        <th className="px-5 py-4">
-                                            Date
-                                        </th>
-
-                                    </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                    {filteredTransactions.map(transaction => (
-
-                                        <tr
-                                            key={transaction.id}
-                                            className="border-b hover:bg-gray-50 transition"
-                                        >
-
-                                            <td className="px-5 py-4">
-
-                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                    transaction.type === "INCOME"
-                                                        ? "bg-green-100 text-green-700"
-                                                        : "bg-red-100 text-red-700"
-                                                }`}>
-                                                    {transaction.type}
-                                                </span>
-
-                                            </td>
-
-                                            <td className="px-5 py-4 font-semibold">
-                                                ${Number(transaction.amount || 0).toFixed(2)}
-                                            </td>
-
-                                            <td className="px-5 py-4">
-                                                {transaction.category || "—"}
-                                            </td>
-
-                                            <td className="px-5 py-4">
-                                                {transaction.order_title || "—"}
-                                            </td>
-
-                                            <td className="px-5 py-4 text-gray-500">
-                                                {transaction.date
-                                                    ? new Date(transaction.date).toLocaleDateString()
-                                                    : "—"}
-                                            </td>
-
-                                        </tr>
-
-                                    ))}
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        )}
-
+                            <tbody>
+                            {filteredTransactions.map(t => (
+                                <tr key={t.id} className="border-t">
+                                    <td className="p-3">{t.type}</td>
+                                    <td className="p-3">${t.amount}</td>
+                                    <td className="p-3">{t.category}</td>
+                                    <td className="p-3">{t.order_title || "—"}</td>
+                                    <td className="p-3">
+                                        {t.date ? new Date(t.date).toLocaleDateString() : "—"}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
                     </div>
 
                 </div>
-
             </div>
         </>
     );

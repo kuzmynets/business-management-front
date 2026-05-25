@@ -13,9 +13,7 @@ export default function MyBusiness() {
 
     const [form, setForm] = useState({
         name: "",
-        logo_url: "",
-        currency: "USD",
-        timezone: "UTC"
+        logo_url: ""
     });
 
     const [loading, setLoading] = useState(true);
@@ -33,18 +31,14 @@ export default function MyBusiness() {
     }, []);
 
     const loadBusiness = async () => {
-
         try {
-
             const data = await apiRequest("/business");
 
             setBusiness(data);
 
             setForm({
                 name: data?.name || "",
-                logo_url: data?.logo_url || "",
-                currency: data?.currency || "USD",
-                timezone: data?.timezone || "UTC"
+                logo_url: data?.logo_url || ""
             });
 
         } catch {
@@ -55,22 +49,16 @@ export default function MyBusiness() {
     };
 
     const hasChanges = useMemo(() => {
-
         if (!business) return false;
 
         return (
             form.name !== (business.name || "") ||
-            form.logo_url !== (business.logo_url || "") ||
-            form.currency !== (business.currency || "USD") ||
-            form.timezone !== (business.timezone || "UTC")
+            form.logo_url !== (business.logo_url || "")
         );
-
     }, [form, business]);
 
     const updateBusiness = async () => {
-
         try {
-
             setSaving(true);
             setError("");
 
@@ -80,9 +68,7 @@ export default function MyBusiness() {
             });
 
             setBusiness(updated);
-
             setSuccess("Business updated successfully");
-
             setShowSaveModal(false);
 
         } catch {
@@ -93,9 +79,7 @@ export default function MyBusiness() {
     };
 
     const deactivateBusiness = async () => {
-
         try {
-
             await apiRequest("/business/deactivate", {
                 method: "POST"
             });
@@ -108,9 +92,7 @@ export default function MyBusiness() {
     };
 
     const deleteBusiness = async () => {
-
         try {
-
             await apiRequest("/business", {
                 method: "DELETE"
             });
@@ -140,7 +122,7 @@ export default function MyBusiness() {
                         </h1>
 
                         <p className="text-gray-500 mt-1">
-                            Manage your company profile and system settings
+                            Manage your company profile
                         </p>
                     </div>
 
@@ -157,7 +139,6 @@ export default function MyBusiness() {
                     )}
 
                     {/* INFO PANEL */}
-
                     <div className="bg-white rounded-xl shadow p-6 space-y-5">
 
                         <div className="flex items-center justify-between">
@@ -235,13 +216,11 @@ export default function MyBusiness() {
                     </div>
 
                     {/* SUBSCRIPTION */}
-
                     <div className="bg-white rounded-xl shadow p-6">
 
                         <div className="flex items-center justify-between">
 
                             <div>
-
                                 <h2 className="text-xl font-semibold">
                                     Subscription
                                 </h2>
@@ -249,7 +228,6 @@ export default function MyBusiness() {
                                 <p className="text-sm text-gray-500 mt-1">
                                     Current business subscription plan
                                 </p>
-
                             </div>
 
                             <div className="text-right">
@@ -278,70 +256,7 @@ export default function MyBusiness() {
 
                     </div>
 
-                    {/* SETTINGS */}
-
-                    <div className="bg-white rounded-xl shadow p-6 space-y-5">
-
-                        <div>
-                            <h2 className="text-xl font-semibold">
-                                System Settings
-                            </h2>
-
-                            <p className="text-sm text-gray-500 mt-1">
-                                Configure currency and timezone
-                            </p>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">
-                                    Currency
-                                </label>
-
-                                <select
-                                    value={form.currency}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            currency: e.target.value
-                                        })
-                                    }
-                                    className="w-full border rounded-lg px-3 py-2"
-                                >
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="UAH">UAH</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">
-                                    Timezone
-                                </label>
-
-                                <select
-                                    value={form.timezone}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            timezone: e.target.value
-                                        })
-                                    }
-                                    className="w-full border rounded-lg px-3 py-2"
-                                >
-                                    <option value="UTC">UTC</option>
-                                    <option value="Europe/Kiev">Europe/Kiev</option>
-                                    <option value="Europe/Warsaw">Europe/Warsaw</option>
-                                </select>
-                            </div>
-
-                        </div>
-
-                    </div>
-
                     {/* ACTIONS */}
-
                     <div className="flex justify-end">
 
                         <button
@@ -359,11 +274,9 @@ export default function MyBusiness() {
                     </div>
 
                     {/* DANGER ZONE */}
-
                     <div className="bg-white border border-red-300 rounded-xl shadow p-6 space-y-5">
 
                         <div>
-
                             <h2 className="text-xl font-semibold text-red-600">
                                 Danger Zone
                             </h2>
@@ -371,7 +284,6 @@ export default function MyBusiness() {
                             <p className="text-sm text-gray-500 mt-1">
                                 These actions are irreversible
                             </p>
-
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4">
@@ -395,11 +307,9 @@ export default function MyBusiness() {
                     </div>
 
                 </div>
-
             </div>
 
-            {/* SAVE MODAL */}
-
+            {/* MODALS */}
             {showSaveModal && (
                 <Modal
                     title="Save Changes"
@@ -409,19 +319,15 @@ export default function MyBusiness() {
                 />
             )}
 
-            {/* DEACTIVATE MODAL */}
-
             {showDeactivateModal && (
                 <Modal
                     title="Deactivate Business"
-                    text="Business will become inaccessible for employees and managers."
+                    text="Business will become inaccessible."
                     onClose={() => setShowDeactivateModal(false)}
                     onConfirm={deactivateBusiness}
                     danger
                 />
             )}
-
-            {/* DELETE MODAL */}
 
             {showDeleteModal && (
                 <Modal
@@ -432,60 +338,42 @@ export default function MyBusiness() {
                     danger
                 />
             )}
-
         </>
     );
 }
 
-function Modal({
-                   title,
-                   text,
-                   onClose,
-                   onConfirm,
-                   danger
-               }) {
-
+function Modal({ title, text, onClose, onConfirm, danger }) {
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-5">
 
-                <div>
+                <h2 className={`text-xl font-semibold ${danger ? "text-red-600" : ""}`}>
+                    {title}
+                </h2>
 
-                    <h2 className={`text-xl font-semibold ${danger ? "text-red-600" : ""}`}>
-                        {title}
-                    </h2>
-
-                    <p className="text-gray-600 mt-2 text-sm">
-                        {text}
-                    </p>
-
-                </div>
+                <p className="text-gray-600 text-sm">
+                    {text}
+                </p>
 
                 <div className="flex justify-end gap-3">
-
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                        className="px-4 py-2 rounded-lg bg-gray-200"
                     >
                         Cancel
                     </button>
 
                     <button
                         onClick={onConfirm}
-                        className={`px-4 py-2 rounded-lg text-white
-                            ${danger
-                            ? "bg-red-600 hover:bg-red-700"
-                            : "bg-blue-600 hover:bg-blue-700"
+                        className={`px-4 py-2 rounded-lg text-white ${
+                            danger ? "bg-red-600" : "bg-blue-600"
                         }`}
                     >
                         Confirm
                     </button>
-
                 </div>
 
             </div>
-
         </div>
     );
 }
