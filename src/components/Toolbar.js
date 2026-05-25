@@ -9,7 +9,6 @@ export default function Toolbar({ role }) {
                     <>
                         <Link to="/owner/business">My Business</Link>
                         <Link to="/owner/dashboard">Dashboard</Link>
-                        <Link to="/owner/orders">Orders</Link>
                         <Link to="/owner/finance">Finance</Link>
                         <Link to="/owner/team">Team</Link>
                         <Link to="/owner/analytic">Analytic</Link>

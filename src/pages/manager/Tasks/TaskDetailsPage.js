@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { apiRequest } from "../../../api/client";
@@ -52,28 +52,41 @@ export default function TaskDetailsPage() {
         }
     };
 
-    const hasChanges = () => {
+    const hasChanges = useMemo(() => {
         if (!task) return false;
 
         return (
-            form.title !== task.title ||
+            form.title !== (task.title || "") ||
             (form.description || "") !== (task.description || "") ||
-            form.status !== task.status ||
+            form.status !== (task.status || "") ||
             (form.assigned_to || "") !== (task.assigned_to || "")
         );
+    }, [form, task]);
+
+    const buildPayload = () => {
+        const payload = {};
+
+        if (form.title !== task.title) payload.title = form.title;
+        if ((form.description || "") !== (task.description || "")) payload.description = form.description;
+        if (form.status !== task.status) payload.status = form.status;
+        if ((form.assigned_to || "") !== (task.assigned_to || "")) payload.assigned_to = form.assigned_to;
+
+        return payload;
     };
 
     const updateTask = async () => {
+        const payload = buildPayload();
+
         await apiRequest(`/tasks/${id}`, {
             method: "PATCH",
-            body: JSON.stringify(form)
+            body: JSON.stringify(payload)
         });
 
         navigate("/manager/tasks");
     };
 
     const handleSaveClick = () => {
-        if (!hasChanges()) return;
+        if (!hasChanges) return;
         setShowConfirm(true);
     };
 
@@ -85,7 +98,7 @@ export default function TaskDetailsPage() {
     if (loading) return <div className="p-6">Loading...</div>;
     if (!task) return <div className="p-6">Not found</div>;
 
-    const disableSave = !hasChanges();
+    const disableSave = !hasChanges;
 
     return (
         <>
@@ -125,6 +138,7 @@ export default function TaskDetailsPage() {
                         >
                             <option value="NEW">New</option>
                             <option value="IN_PROGRESS">In Progress</option>
+                            <option value="PAUSED">Paused</option>
                             <option value="DONE">Done</option>
                         </select>
                     </div>
@@ -171,6 +185,7 @@ export default function TaskDetailsPage() {
             {showConfirm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded shadow w-96 space-y-4">
+
                         <div className="text-lg font-semibold">
                             Confirm update
                         </div>
@@ -194,6 +209,7 @@ export default function TaskDetailsPage() {
                                 Confirm
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}
