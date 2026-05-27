@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "../../api/client";
 import { AuthContext } from "../../contexts/AuthContext";
 import Toolbar from "../../components/Toolbar";
@@ -9,25 +9,30 @@ export default function EmployeeDashboard() {
     const { t } = useTranslation();
 
     const [tasks, setTasks] = useState([]);
+    const [manager, setManager] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     const [tab, setTab] = useState("ACTIVE");
 
-    useEffect(() => {
-        fetchTasks();
-    }, []);
-
-    const fetchTasks = async () => {
+    const fetchTasks = useCallback(async () => {
         try {
-            const data = await apiRequest("/employee/tasks/my");
+            const [data, managerData] = await Promise.all([
+                apiRequest("/employee/tasks/my"),
+                apiRequest("/employee/tasks/manager").catch(() => null),
+            ]);
             setTasks(Array.isArray(data) ? data : []);
+            setManager(managerData);
         } catch {
             setError(t("failed_load_tasks"));
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        fetchTasks();
+    }, [fetchTasks]);
 
     const updateStatus = async (taskId, status) => {
         await apiRequest(`/employee/tasks/${taskId}/status`, {
@@ -52,12 +57,26 @@ export default function EmployeeDashboard() {
         [tasks]
     );
 
+    const currentTask = activeTasks.find(t => t.status === "IN_PROGRESS") || activeTasks[0];
+
     const renderTask = (task) => (
-        <div key={task.id} className="bg-white p-4 rounded shadow space-y-3">
+        <div
+            key={task.id}
+            className={`bg-white p-4 rounded shadow space-y-3 ${
+                currentTask?.id === task.id ? "border-l-4 border-blue-600" : ""
+            }`}
+        >
 
             <div className="flex justify-between">
                 <div className="font-semibold">{task.title}</div>
-                <div className="text-sm text-gray-500">{task.status}</div>
+                <div className="flex gap-2">
+                    <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700">
+                        {task.status}
+                    </span>
+                    <span className={`text-xs px-2 py-1 rounded ${priorityClass(task.priority)}`}>
+                        {task.priority || "MEDIUM"}
+                    </span>
+                </div>
             </div>
 
             <div className="text-sm text-gray-600">
@@ -116,6 +135,18 @@ export default function EmployeeDashboard() {
                         {t("my_tasks")}
                     </h1>
 
+                    {manager && (
+                        <div className="bg-white p-4 rounded shadow">
+                            <div className="text-sm text-gray-500">Ваш менеджер</div>
+                            <div className="font-semibold">{manager.name || manager.email}</div>
+                            <div className="text-sm text-gray-600">{manager.email}</div>
+                            <div className="text-sm text-gray-600">{manager.role}</div>
+                            {manager.contacts && (
+                                <div className="text-sm text-gray-600">{manager.contacts}</div>
+                            )}
+                        </div>
+                    )}
+
                     {error && <div className="text-red-600">{error}</div>}
 
                     <div className="flex gap-2">
@@ -153,4 +184,12 @@ export default function EmployeeDashboard() {
             </div>
         </>
     );
+}
+
+function priorityClass(priority) {
+    return {
+        HIGH: "bg-red-100 text-red-700",
+        MEDIUM: "bg-yellow-100 text-yellow-700",
+        LOW: "bg-green-100 text-green-700",
+    }[priority] || "bg-gray-100 text-gray-700";
 }

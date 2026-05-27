@@ -22,7 +22,6 @@ export default function MyBusiness() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const [showDeactivateModal, setShowDeactivateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showSaveModal, setShowSaveModal] = useState(false);
 
@@ -75,19 +74,6 @@ export default function MyBusiness() {
             setError("Failed to update business");
         } finally {
             setSaving(false);
-        }
-    };
-
-    const deactivateBusiness = async () => {
-        try {
-            await apiRequest("/business/deactivate", {
-                method: "POST"
-            });
-
-            navigate("/");
-
-        } catch {
-            setError("Failed to deactivate business");
         }
     };
 
@@ -287,14 +273,6 @@ export default function MyBusiness() {
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4">
-
-                            <button
-                                onClick={() => setShowDeactivateModal(true)}
-                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
-                            >
-                                Deactivate Business
-                            </button>
-
                             <button
                                 onClick={() => setShowDeleteModal(true)}
                                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
@@ -316,16 +294,6 @@ export default function MyBusiness() {
                     text="Apply changes to business settings?"
                     onClose={() => setShowSaveModal(false)}
                     onConfirm={updateBusiness}
-                />
-            )}
-
-            {showDeactivateModal && (
-                <Modal
-                    title="Deactivate Business"
-                    text="Business will become inaccessible."
-                    onClose={() => setShowDeactivateModal(false)}
-                    onConfirm={deactivateBusiness}
-                    danger
                 />
             )}
 

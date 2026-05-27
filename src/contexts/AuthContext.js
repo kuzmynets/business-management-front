@@ -42,12 +42,14 @@ export const AuthProvider = ({ children }) => {
 
     const registerOwner = async (email, password, business_name) => {
         const data = await registerOwnerApi({ email, password, business_name });
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const idToken = await cred.user.getIdToken();
 
         const userData = {
             email: data.email,
             role: data.role,
             businessId: data.business_id,
-            token: null,
+            token: idToken,
         };
 
         setUser(userData);
@@ -60,8 +62,19 @@ export const AuthProvider = ({ children }) => {
         await auth.signOut();
     };
 
+    const switchBusiness = (businessId, role = user?.role) => {
+        const nextUser = {
+            ...user,
+            businessId,
+            role,
+        };
+
+        setUser(nextUser);
+        localStorage.setItem("user", JSON.stringify(nextUser));
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, registerOwner, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, registerOwner, logout, switchBusiness }}>
             {!loading && children}
         </AuthContext.Provider>
     );

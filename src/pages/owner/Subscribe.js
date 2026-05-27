@@ -18,7 +18,7 @@ export default function SubscribePage() {
     const loadSubscription = async () => {
         setLoading(true);
         try {
-            const data = await apiRequest(`/subscription?business_id=${user.businessId}`);
+            const data = await apiRequest("/subscription");
             setSubscription(data.current || null);
             setPlans(data.plans || []);
             if (data.plans?.length > 0) setSelectedPlan(data.plans[0].id);

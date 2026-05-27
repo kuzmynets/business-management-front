@@ -51,18 +51,25 @@ export default function ManagerDashboard() {
             <div className="min-h-screen bg-gray-100 p-6">
                 <div className="max-w-7xl mx-auto space-y-6">
 
-                    <h1 className="text-2xl font-bold">Manager Control Center</h1>
+                    <h1 className="text-2xl font-bold">Панель менеджера</h1>
 
                     {error && <div className="text-red-600">{error}</div>}
+
+                    <div className="grid md:grid-cols-4 gap-4">
+                        <Stat title="Завершено сьогодні" value={data.completed_today || 0} />
+                        <Stat title="У роботі" value={data.in_progress || 0} />
+                        <Stat title="Працівники" value={data.employees_count || 0} />
+                        <Stat title="Активні замовлення" value={data.active_orders?.length || 0} />
+                    </div>
 
                     {/* CRITICAL */}
                     <div className="bg-white p-6 rounded-xl shadow border-l-4 border-red-500">
                         <h2 className="text-lg font-semibold text-red-600 mb-4">
-                            Critical Issues
+                            Критичні ситуації
                         </h2>
 
                         {criticalIssues.length === 0 ? (
-                            <div className="text-gray-500 text-sm">No critical issues</div>
+                            <div className="text-gray-500 text-sm">Критичних ситуацій немає</div>
                         ) : (
                             <div className="space-y-3">
                                 {criticalIssues.map(item => (
@@ -92,7 +99,7 @@ export default function ManagerDashboard() {
                     {/* ACTIVE WORK */}
                     <div className="bg-white p-6 rounded-xl shadow">
                         <h2 className="text-lg font-semibold mb-4">
-                            Active Operations
+                            Активні операції
                         </h2>
 
                         <div className="grid md:grid-cols-2 gap-3">
@@ -129,21 +136,21 @@ export default function ManagerDashboard() {
                             <div className="text-xl font-bold">
                                 {data.active_orders?.length || 0}
                             </div>
-                            <div className="text-sm text-gray-500">Active Orders</div>
+                                    <div className="text-sm text-gray-500">Активні замовлення</div>
                         </div>
 
                         <div>
                             <div className="text-xl font-bold text-red-600">
                                 {criticalIssues.length}
                             </div>
-                            <div className="text-sm text-gray-500">Critical</div>
+                            <div className="text-sm text-gray-500">Критичні</div>
                         </div>
 
                         <div>
                             <div className="text-xl font-bold">
                                 {data.team_tasks?.length || 0}
                             </div>
-                            <div className="text-sm text-gray-500">Tasks</div>
+                            <div className="text-sm text-gray-500">Задачі</div>
                         </div>
 
                     </div>
@@ -151,5 +158,14 @@ export default function ManagerDashboard() {
                 </div>
             </div>
         </>
+    );
+}
+
+function Stat({ title, value }) {
+    return (
+        <div className="bg-white p-5 rounded-xl shadow">
+            <div className="text-sm text-gray-500">{title}</div>
+            <div className="text-2xl font-bold mt-1">{value}</div>
+        </div>
     );
 }

@@ -2,11 +2,14 @@ const API_URL = "http://127.0.0.1:8000";
 
 export async function apiRequest(path, options = {}) {
     const stored = localStorage.getItem("user");
-    const token = stored ? JSON.parse(stored).token : null;
+    const user = stored ? JSON.parse(stored) : null;
+    const token = user?.token || null;
+    const businessId = user?.businessId || null;
 
     const headers = {
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
+        ...(businessId && { "X-Business-Id": businessId }),
         ...options.headers,
     };
 

@@ -8,6 +8,7 @@ export default function AcceptInvite() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [existingUser, setExistingUser] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [valid, setValid] = useState(false);
@@ -17,6 +18,7 @@ export default function AcceptInvite() {
             try {
                 const data = await apiRequest(`/invites/validate/${token}`);
                 setEmail(data.email);
+                setExistingUser(Boolean(data.existing_user));
                 setValid(true);
             } catch {
                 setError("Невірне або прострочене запрошення");
@@ -35,7 +37,7 @@ export default function AcceptInvite() {
             await apiRequest(`/invites/accept/${token}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password: existingUser ? null : password })
             });
 
             navigate("/login");
@@ -43,6 +45,23 @@ export default function AcceptInvite() {
             // якщо бекенд повертає message
             if (err?.message) setError(err.message);
             else setError("Помилка при прийнятті інвайту");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const declineInvite = async () => {
+        setLoading(true);
+        setError("");
+
+        try {
+            await apiRequest(`/invites/decline/${token}`, {
+                method: "POST",
+            });
+
+            navigate("/login");
+        } catch (err) {
+            setError(err?.message || "Не вдалося відхилити запрошення");
         } finally {
             setLoading(false);
         }
@@ -64,7 +83,7 @@ export default function AcceptInvite() {
                 onSubmit={handleSubmit}
                 className="bg-white p-6 rounded shadow-md w-full max-w-md space-y-4"
             >
-                <h2 className="text-lg font-semibold">Accept Invite</h2>
+                <h2 className="text-lg font-semibold">Прийняти запрошення</h2>
 
                 {error && <p className="text-red-600">{error}</p>}
 
@@ -77,21 +96,38 @@ export default function AcceptInvite() {
                     className="w-full border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
                 />
 
-                <input
-                    type="password"
-                    required
-                    placeholder="New Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border px-3 py-2 rounded"
-                />
+                {!existingUser && (
+                    <input
+                        type="password"
+                        required
+                        placeholder="Новий пароль"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full border px-3 py-2 rounded"
+                    />
+                )}
+
+                {existingUser && (
+                    <p className="text-sm text-gray-600">
+                        Цей акаунт уже існує. Пароль не змінюватиметься.
+                    </p>
+                )}
 
                 <button
                     type="submit"
                     disabled={loading}
                     className="w-full bg-blue-600 text-white py-2 rounded"
                 >
-                    {loading ? "Processing..." : "Accept Invite"}
+                    {loading ? "Обробка..." : "Прийняти"}
+                </button>
+
+                <button
+                    type="button"
+                    disabled={loading}
+                    onClick={declineInvite}
+                    className="w-full bg-gray-200 text-gray-800 py-2 rounded"
+                >
+                    Відмовитись
                 </button>
             </form>
         </div>

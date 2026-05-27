@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { apiRequest } from "../../api/client";
 import Toolbar from "../../components/Toolbar";
@@ -7,9 +7,11 @@ export default function Finance() {
     const { user } = useContext(AuthContext);
 
     const [transactions, setTransactions] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [summary, setSummary] = useState({ income: 0, expenses: 0, profit: 0 });
 
     const [loading, setLoading] = useState(true);
-    const [syncLoading, setSyncLoading] = useState(false);
     const [expenseLoading, setExpenseLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -24,51 +26,50 @@ export default function Finance() {
         description: ""
     });
 
-    useEffect(() => {
-        loadFinance();
-    }, []);
-
-    const loadFinance = async () => {
+    const loadFinance = useCallback(async (nextPage = page) => {
         try {
             setLoading(true);
 
-            const data = await apiRequest("/finance");
+            const data = await apiRequest(`/finance?page=${nextPage}&limit=10`);
 
-            setTransactions(Array.isArray(data) ? data : []);
+            setTransactions(Array.isArray(data?.items) ? data.items : []);
+            setTotalPages(data?.total_pages || 1);
+            setSummary(data?.summary || { income: 0, expenses: 0, profit: 0 });
         } catch {
             setError("Failed to load finance data");
         } finally {
             setLoading(false);
         }
-    };
+    }, [page]);
 
-    const syncOrders = async () => {
-        try {
-            setSyncLoading(true);
-
-            await apiRequest("/finance/sync-orders", {
-                method: "POST"
-            });
-
-            await loadFinance();
-        } catch {
-            setError("Failed to sync order transactions");
-        } finally {
-            setSyncLoading(false);
-        }
-    };
+    useEffect(() => {
+        loadFinance(page);
+    }, [loadFinance, page]);
 
     const createExpense = async (e) => {
         e.preventDefault();
+        const amount = Number(expenseForm.amount);
+        const category = expenseForm.category.trim();
+
+        if (!amount || amount <= 0) {
+            setError("Amount must be greater than zero");
+            return;
+        }
+
+        if (!category) {
+            setError("Category is required");
+            return;
+        }
 
         try {
             setExpenseLoading(true);
+            setError("");
 
             await apiRequest("/finance/expense", {
                 method: "POST",
                 body: JSON.stringify({
-                    amount: Number(expenseForm.amount),
-                    category: expenseForm.category,
+                    amount,
+                    category,
                     description: expenseForm.description
                 })
             });
@@ -79,7 +80,7 @@ export default function Finance() {
                 description: ""
             });
 
-            await loadFinance();
+            await loadFinance(page);
 
         } catch {
             setError("Failed to create expense");
@@ -100,16 +101,6 @@ export default function Finance() {
         });
     }, [transactions, typeFilter, categoryFilter, dateFrom, dateTo]);
 
-    const income = filteredTransactions
-        .filter(t => t.type === "INCOME")
-        .reduce((a, b) => a + Number(b.amount || 0), 0);
-
-    const expenses = filteredTransactions
-        .filter(t => t.type === "EXPENSE")
-        .reduce((a, b) => a + Number(b.amount || 0), 0);
-
-    const profit = income - expenses;
-
     const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
 
     if (loading) return <div className="p-6">Loading...</div>;
@@ -122,21 +113,13 @@ export default function Finance() {
                 <div className="max-w-7xl mx-auto space-y-6">
 
                     {/* HEADER */}
-                    <div className="flex items-center justify-between">
+                    <div>
                         <div>
                             <h1 className="text-3xl font-bold">Finance</h1>
                             <p className="text-gray-500 mt-1">
                                 Income, expenses and profit overview
                             </p>
                         </div>
-
-                        <button
-                            onClick={syncOrders}
-                            disabled={syncLoading}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                        >
-                            {syncLoading ? "Syncing..." : "Sync Orders"}
-                        </button>
                     </div>
 
                     {error && (
@@ -154,6 +137,9 @@ export default function Finance() {
 
                         <input
                             type="number"
+                            min="0.01"
+                            step="0.01"
+                            required
                             placeholder="Amount"
                             value={expenseForm.amount}
                             onChange={e =>
@@ -163,6 +149,7 @@ export default function Finance() {
                         />
 
                         <input
+                            required
                             placeholder="Category"
                             value={expenseForm.category}
                             onChange={e =>
@@ -193,21 +180,21 @@ export default function Finance() {
                         <div className="bg-white p-6 rounded shadow">
                             <div className="text-gray-500">Income</div>
                             <div className="text-2xl text-green-600 font-bold">
-                                ${income.toFixed(2)}
+                                ${Number(summary.income || 0).toFixed(2)}
                             </div>
                         </div>
 
                         <div className="bg-white p-6 rounded shadow">
                             <div className="text-gray-500">Expenses</div>
                             <div className="text-2xl text-red-600 font-bold">
-                                ${expenses.toFixed(2)}
+                                ${Number(summary.expenses || 0).toFixed(2)}
                             </div>
                         </div>
 
                         <div className="bg-white p-6 rounded shadow">
                             <div className="text-gray-500">Profit</div>
                             <div className="text-2xl font-bold">
-                                ${profit.toFixed(2)}
+                                ${Number(summary.profit || 0).toFixed(2)}
                             </div>
                         </div>
                     </div>
@@ -277,6 +264,26 @@ export default function Finance() {
                             ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2">
+                        <button
+                            disabled={page <= 1}
+                            onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                            className="px-3 py-2 bg-white border rounded disabled:text-gray-400"
+                        >
+                            Previous
+                        </button>
+                        <span className="text-sm text-gray-600">
+                            Page {page} of {totalPages}
+                        </span>
+                        <button
+                            disabled={page >= totalPages}
+                            onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+                            className="px-3 py-2 bg-white border rounded disabled:text-gray-400"
+                        >
+                            Next
+                        </button>
                     </div>
 
                 </div>
