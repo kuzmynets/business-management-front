@@ -8,18 +8,31 @@ import LogoutButton from "./LogoutButton";
 export default function Toolbar({ role }) {
     const { user } = useContext(AuthContext);
     const { currentBusiness, businesses, reloadBusinesses, switchBusiness } = useBusiness();
+
     const [creating, setCreating] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [name, setName] = useState("");
 
     const handleBusinessChange = (businessId) => {
         switchBusiness(businessId);
     };
 
+    const openModal = () => {
+        setName("");
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setName("");
+    };
+
     const createBusiness = async () => {
-        const name = window.prompt("New business name");
-        if (!name?.trim()) return;
+        if (!name.trim()) return;
 
         try {
             setCreating(true);
+
             const created = await apiRequest("/business", {
                 method: "POST",
                 body: JSON.stringify({ name: name.trim() }),
@@ -27,99 +40,134 @@ export default function Toolbar({ role }) {
 
             switchBusiness(created.id);
             await reloadBusinesses();
+
+            closeModal();
         } finally {
             setCreating(false);
         }
     };
 
-    const logo = currentBusiness?.logo_url;
-
     return (
-        <header className="h-14 bg-gray-900 text-white flex items-center justify-between px-6 shadow">
+        <>
+            <header className="h-14 bg-gray-900 text-white flex items-center justify-between px-6 shadow">
 
-            {/* LEFT */}
-            <div className="flex items-center gap-3">
+                {/* LEFT */}
+                <div className="flex items-center gap-3">
 
-                {logo ? (
-                    <img
-                        src={logo}
-                        alt="logo"
-                        className="w-8 h-8 rounded object-cover"
-                    />
-                ) : (
                     <div className="w-8 h-8 bg-gray-700 rounded flex items-center justify-center text-xs">
                         CRM
                     </div>
-                )}
 
-                <div className="font-semibold text-sm tracking-wide">
-                    {currentBusiness?.name || "Business System"}
+                    <div className="font-semibold text-sm">
+                        {currentBusiness?.name || "Business System"}
+                    </div>
+
+                    <div className="text-xs text-gray-400 ml-2">
+                        {role}
+                    </div>
+
                 </div>
 
-                <div className="text-xs text-gray-400 ml-2">
-                    {role}
-                </div>
-            </div>
+                {/* CENTER NAV */}
+                <nav className="flex gap-5 text-sm text-gray-200">
 
-            {/* CENTER NAV */}
-            <nav className="flex gap-5 text-sm text-gray-200">
-                {role === "OWNER" && (
-                    <>
-                        <Link className="hover:text-white" to="/owner/dashboard">Dashboard</Link>
-                        <Link className="hover:text-white" to="/owner/business">Business</Link>
-                        <Link className="hover:text-white" to="/owner/finance">Finance</Link>
-                        <Link className="hover:text-white" to="/owner/team">Team</Link>
-                        <Link className="hover:text-white" to="/owner/analytic">Analytics</Link>
-                        <Link className="hover:text-white" to="/owner/subscribe">Subscription</Link>
-                    </>
-                )}
+                    {role === "OWNER" && (
+                        <>
+                            <Link className="hover:text-white" to="/owner/dashboard">Dashboard</Link>
+                            <Link className="hover:text-white" to="/owner/business">Business</Link>
+                            <Link className="hover:text-white" to="/owner/finance">Finance</Link>
+                            <Link className="hover:text-white" to="/owner/team">Team</Link>
+                            <Link className="hover:text-white" to="/owner/analytic">Analytics</Link>
+                            <Link className="hover:text-white" to="/owner/subscribe">Subscription</Link>
+                        </>
+                    )}
 
-                {role === "MANAGER" && (
-                    <>
-                        <Link className="hover:text-white" to="/manager/dashboard">Dashboard</Link>
-                        <Link className="hover:text-white" to="/manager/orders">Orders</Link>
-                        <Link className="hover:text-white" to="/manager/tasks">Tasks</Link>
-                        <Link className="hover:text-white" to="/manager/team">Team</Link>
-                    </>
-                )}
+                    {role === "MANAGER" && (
+                        <>
+                            <Link className="hover:text-white" to="/manager/dashboard">Dashboard</Link>
+                            <Link className="hover:text-white" to="/manager/orders">Orders</Link>
+                            <Link className="hover:text-white" to="/manager/tasks">Tasks</Link>
+                            <Link className="hover:text-white" to="/manager/team">Team</Link>
+                        </>
+                    )}
 
-                {role === "EMPLOYEE" && (
-                    <Link className="hover:text-white" to="/employee/dashboard">Tasks</Link>
-                )}
-            </nav>
+                    {role === "EMPLOYEE" && (
+                        <Link className="hover:text-white" to="/employee/dashboard">Tasks</Link>
+                    )}
 
-            {/* RIGHT */}
-            <div className="flex items-center gap-3">
-                {businesses.length > 0 && (
-                    <>
+                </nav>
+
+                {/* RIGHT */}
+                <div className="flex items-center gap-3">
+
+                    {businesses?.length > 0 && (
                         <select
                             value={currentBusiness?.id || user?.businessId || ""}
                             onChange={(e) => handleBusinessChange(e.target.value)}
                             className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm"
                         >
-                            {businesses.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.name || "Business"}
+                            {businesses.map((b) => (
+                                <option key={b.id} value={b.id}>
+                                    {b.name}
                                 </option>
                             ))}
                         </select>
+                    )}
 
-                        {role === "OWNER" && (
+                    {role === "OWNER" && (
+                        <button
+                            onClick={openModal}
+                            className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
+                        >
+                            New Business
+                        </button>
+                    )}
+
+                    <LogoutButton />
+
+                </div>
+            </header>
+
+            {/* MODAL */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                    <div className="bg-white w-96 p-6 rounded-xl space-y-4">
+
+                        <h2 className="text-lg font-semibold">
+                            Створити новий бізнес
+                        </h2>
+
+                        <input
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Назва бізнесу"
+                            className="w-full border px-3 py-2 rounded"
+                        />
+
+                        <div className="flex justify-end gap-2">
+
                             <button
-                                type="button"
-                                disabled={creating}
-                                onClick={createBusiness}
-                                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-3 py-1 rounded text-sm"
+                                onClick={closeModal}
+                                className="px-3 py-2 border rounded"
                             >
-                                {creating ? "Creating..." : "New Business"}
+                                Назад
                             </button>
-                        )}
-                    </>
-                )}
 
-                <LogoutButton />
-            </div>
+                            <button
+                                onClick={createBusiness}
+                                disabled={creating}
+                                className="px-3 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+                            >
+                                {creating ? "Створення..." : "Створити"}
+                            </button>
 
-        </header>
+                        </div>
+
+                    </div>
+
+                </div>
+            )}
+        </>
     );
 }

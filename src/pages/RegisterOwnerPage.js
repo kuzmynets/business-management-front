@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const RegisterOwnerPage = () => {
     const { registerOwner } = useContext(AuthContext);
@@ -24,7 +24,15 @@ export const RegisterOwnerPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 relative">
+
+            <Link
+                to="/"
+                className="absolute top-6 left-6 text-sm text-gray-600 hover:text-gray-900"
+            >
+                ← Головна
+            </Link>
+
             <form
                 onSubmit={submit}
                 className="bg-white p-8 rounded shadow w-full max-w-sm space-y-4"

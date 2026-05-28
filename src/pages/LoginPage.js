@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function LoginPage() {
@@ -26,7 +26,15 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 relative">
+
+            <Link
+                to="/"
+                className="absolute top-6 left-6 text-sm text-gray-600 hover:text-gray-900"
+            >
+                ← Головна
+            </Link>
+
             <form
                 onSubmit={handleSubmit}
                 className="w-full max-w-sm bg-white p-6 rounded shadow space-y-4"
