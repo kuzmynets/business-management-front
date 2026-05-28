@@ -45,7 +45,7 @@ export default function TaskDetailsPage() {
             });
 
         } catch {
-            setError("Failed to load task");
+            setError("Не вдалося завантажити завдання");
             setTask(null);
         } finally {
             setLoading(false);
@@ -95,8 +95,8 @@ export default function TaskDetailsPage() {
         await updateTask();
     };
 
-    if (loading) return <div className="p-6">Loading...</div>;
-    if (!task) return <div className="p-6">Not found</div>;
+    if (loading) return <div className="p-6">Завантаження...</div>;
+    if (!task) return <div className="p-6">Завдання не знайдено</div>;
 
     const disableSave = !hasChanges;
 
@@ -107,12 +107,12 @@ export default function TaskDetailsPage() {
             <div className="min-h-screen bg-gray-100 p-6">
                 <div className="max-w-3xl mx-auto space-y-6">
 
-                    <h1 className="text-2xl font-bold">Task Details</h1>
+                    <h1 className="text-2xl font-bold">Деталі завдання</h1>
 
                     {error && <div className="text-red-600">{error}</div>}
 
                     <div className="bg-white p-4 rounded shadow">
-                        <label className="text-sm text-gray-500">Title</label>
+                        <label className="text-sm text-gray-500">Назва</label>
                         <input
                             className="w-full border px-3 py-2 rounded mt-1"
                             value={form.title}
@@ -121,7 +121,7 @@ export default function TaskDetailsPage() {
                     </div>
 
                     <div className="bg-white p-4 rounded shadow">
-                        <label className="text-sm text-gray-500">Description</label>
+                        <label className="text-sm text-gray-500">Опис</label>
                         <textarea
                             className="w-full border px-3 py-2 rounded mt-1"
                             value={form.description}
@@ -130,27 +130,27 @@ export default function TaskDetailsPage() {
                     </div>
 
                     <div className="bg-white p-4 rounded shadow">
-                        <label className="text-sm text-gray-500">Status</label>
+                        <label className="text-sm text-gray-500">Статус</label>
                         <select
                             className="w-full border px-3 py-2 rounded mt-1"
                             value={form.status}
                             onChange={e => setForm({ ...form, status: e.target.value })}
                         >
-                            <option value="NEW">New</option>
-                            <option value="IN_PROGRESS">In Progress</option>
-                            <option value="PAUSED">Paused</option>
-                            <option value="DONE">Done</option>
+                            <option value="NEW">NEW</option>
+                            <option value="IN_PROGRESS">IN-PROGRESS</option>
+                            <option value="PAUSED">PAUSED</option>
+                            <option value="DONE">DONE</option>
                         </select>
                     </div>
 
                     <div className="bg-white p-4 rounded shadow">
-                        <label className="text-sm text-gray-500">Assignee</label>
+                        <label className="text-sm text-gray-500">Виконавець</label>
                         <select
                             className="w-full border px-3 py-2 rounded mt-1"
                             value={form.assigned_to}
                             onChange={e => setForm({ ...form, assigned_to: e.target.value })}
                         >
-                            <option value="">Unassigned</option>
+                            <option value="">Не призначено</option>
                             {employees.map(emp => (
                                 <option key={emp.id} value={emp.id}>
                                     {emp.email}
@@ -164,7 +164,7 @@ export default function TaskDetailsPage() {
                             onClick={() => navigate("/manager/tasks")}
                             className="px-4 py-2 bg-gray-300 rounded"
                         >
-                            Back
+                            Назад
                         </button>
 
                         <button
@@ -176,7 +176,7 @@ export default function TaskDetailsPage() {
                                     : "bg-blue-600"
                             }`}
                         >
-                            Save changes
+                            Зберегти зміни
                         </button>
                     </div>
                 </div>
@@ -187,11 +187,11 @@ export default function TaskDetailsPage() {
                     <div className="bg-white p-6 rounded shadow w-96 space-y-4">
 
                         <div className="text-lg font-semibold">
-                            Confirm update
+                            Підтвердження
                         </div>
 
                         <div className="text-sm text-gray-600">
-                            Apply changes to this task?
+                            Застосувати зміни до цього завдання?
                         </div>
 
                         <div className="flex justify-end gap-2">
@@ -199,14 +199,14 @@ export default function TaskDetailsPage() {
                                 onClick={() => setShowConfirm(false)}
                                 className="px-3 py-2 bg-gray-300 rounded"
                             >
-                                Cancel
+                                Скасувати
                             </button>
 
                             <button
                                 onClick={confirmSave}
                                 className="px-3 py-2 bg-blue-600 text-white rounded"
                             >
-                                Confirm
+                                Підтвердити
                             </button>
                         </div>
 

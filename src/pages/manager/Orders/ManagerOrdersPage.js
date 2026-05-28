@@ -4,7 +4,12 @@ import { apiRequest } from "../../../api/client";
 import Toolbar from "../../../components/Toolbar";
 import { useNavigate } from "react-router-dom";
 
-const STATUSES = ["NEW", "IN_PROGRESS", "REVIEW", "COMPLETED"];
+const STATUSES = [
+    "NEW",
+    "IN_PROGRESS",
+    "REVIEW",
+    "COMPLETED"
+];
 
 export default function ManagerOrders() {
 
@@ -39,7 +44,7 @@ export default function ManagerOrders() {
             setClients(Array.isArray(clientsData) ? clientsData : []);
 
         } catch {
-            setError("Failed to load data");
+            setError("Не вдалося завантажити дані");
         } finally {
             setLoading(false);
         }
@@ -71,7 +76,7 @@ export default function ManagerOrders() {
             setDescription("");
 
         } catch {
-            setError("Failed to create order");
+            setError("Не вдалося створити замовлення");
         }
     };
 
@@ -87,11 +92,11 @@ export default function ManagerOrders() {
             );
 
         } catch {
-            setError("Failed to update status");
+            setError("Не вдалося оновити статус");
         }
     };
 
-    if (loading) return <div className="p-6">Loading...</div>;
+    if (loading) return <div className="p-6">Завантаження...</div>;
 
     return (
         <>
@@ -99,19 +104,30 @@ export default function ManagerOrders() {
 
             <div className="p-6 bg-gray-100 min-h-screen space-y-6">
 
-                <h1 className="text-2xl font-bold">Orders</h1>
+                <h1 className="text-2xl font-bold">
+                    Замовлення
+                </h1>
 
-                {error && <div className="text-red-600">{error}</div>}
+                {error && (
+                    <div className="text-red-600">
+                        {error}
+                    </div>
+                )}
 
                 {/* CREATE ORDER */}
-                <form onSubmit={createOrder} className="bg-white p-4 rounded shadow space-y-3">
+                <form
+                    onSubmit={createOrder}
+                    className="bg-white p-4 rounded shadow space-y-3"
+                >
 
-                    <h2 className="font-semibold">Create Order</h2>
+                    <h2 className="font-semibold">
+                        Створити замовлення
+                    </h2>
 
                     <input
                         value={title}
                         onChange={e => setTitle(e.target.value)}
-                        placeholder="Title"
+                        placeholder="Назва"
                         className="w-full border px-3 py-2 rounded"
                         required
                     />
@@ -121,7 +137,10 @@ export default function ManagerOrders() {
                         onChange={e => setClientId(e.target.value)}
                         className="w-full border px-3 py-2 rounded"
                     >
-                        <option value="">Select client</option>
+                        <option value="">
+                            Оберіть клієнта
+                        </option>
+
                         {clients.map(c => (
                             <option key={c.id} value={c.id}>
                                 {c.name}
@@ -132,7 +151,7 @@ export default function ManagerOrders() {
                     <input
                         value={newClient}
                         onChange={e => setNewClient(e.target.value)}
-                        placeholder="Or new client"
+                        placeholder="Або новий клієнт"
                         className="w-full border px-3 py-2 rounded"
                     />
 
@@ -140,7 +159,7 @@ export default function ManagerOrders() {
                         type="number"
                         value={budget}
                         onChange={e => setBudget(e.target.value)}
-                        placeholder="Budget"
+                        placeholder="Бюджет"
                         className="w-full border px-3 py-2 rounded"
                     />
 
@@ -154,12 +173,12 @@ export default function ManagerOrders() {
                     <textarea
                         value={description}
                         onChange={e => setDescription(e.target.value)}
-                        placeholder="Description"
+                        placeholder="Опис"
                         className="w-full border px-3 py-2 rounded"
                     />
 
                     <button className="bg-blue-600 text-white px-4 py-2 rounded">
-                        Create
+                        Створити
                     </button>
 
                 </form>
@@ -168,7 +187,10 @@ export default function ManagerOrders() {
                 <div className="grid grid-cols-4 gap-4">
 
                     {STATUSES.map(status => (
-                        <div key={status} className="bg-gray-200 p-3 rounded">
+                        <div
+                            key={status}
+                            className="bg-gray-200 p-3 rounded"
+                        >
 
                             <div className="font-semibold mb-3">
                                 {status}
@@ -188,8 +210,11 @@ export default function ManagerOrders() {
                                             {/* CLICK AREA */}
                                             <div
                                                 className="cursor-pointer"
-                                                onClick={() => navigate(`/manager/orders/${order.id}`)}
+                                                onClick={() =>
+                                                    navigate(`/manager/orders/${order.id}`)
+                                                }
                                             >
+
                                                 <div className="font-medium">
                                                     {order.title}
                                                 </div>
@@ -197,10 +222,12 @@ export default function ManagerOrders() {
                                                 <div className="text-xs text-gray-500">
                                                     {order.client_name}
                                                 </div>
+
                                             </div>
 
                                             {/* CONTROLS */}
                                             <div className="mt-2">
+
                                                 <select
                                                     value={order.status}
                                                     onClick={(e) => e.stopPropagation()}
@@ -210,12 +237,15 @@ export default function ManagerOrders() {
                                                     }}
                                                     className="text-xs border rounded px-1"
                                                 >
+
                                                     {STATUSES.map(s => (
                                                         <option key={s} value={s}>
                                                             {s}
                                                         </option>
                                                     ))}
+
                                                 </select>
+
                                             </div>
 
                                         </div>

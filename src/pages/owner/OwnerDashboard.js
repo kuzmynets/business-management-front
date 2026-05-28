@@ -114,8 +114,6 @@ export default function OwnerDashboard() {
                                 <th className="p-3 text-left">Задача</th>
                                 <th className="p-3 text-left">Замовлення</th>
                                 <th className="p-3 text-left">Статус</th>
-                                <th className="p-3 text-left">Пріоритет</th>
-                                <th className="p-3 text-left">Призначив</th>
                                 <th className="p-3 text-left">Працівник</th>
                             </tr>
                             </thead>
@@ -125,8 +123,6 @@ export default function OwnerDashboard() {
                                     <td className="p-3 font-medium">{task.title || "-"}</td>
                                     <td className="p-3">{task.order_title || "-"}</td>
                                     <td className="p-3"><Badge value={task.status} /></td>
-                                    <td className="p-3">{task.priority || "-"}</td>
-                                    <td className="p-3">{task.assigned_by_name || task.created_by_name || "-"}</td>
                                     <td className="p-3">{task.assigned_to_name || "-"}</td>
                                 </tr>
                             ))}
