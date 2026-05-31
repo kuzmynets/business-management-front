@@ -4,6 +4,7 @@ import { apiRequest } from "../api/client";
 import { AuthContext } from "../contexts/AuthContext";
 import { useBusiness } from "../contexts/BusinessContext";
 import LogoutButton from "./LogoutButton";
+import {imageListClasses} from "@mui/material";
 
 export default function Toolbar({ role }) {
     const { user } = useContext(AuthContext);
@@ -12,6 +13,7 @@ export default function Toolbar({ role }) {
     const [creating, setCreating] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState("");
+    const logo = currentBusiness?.logo_url;
 
     const handleBusinessChange = (businessId) => {
         switchBusiness(businessId);
@@ -55,7 +57,7 @@ export default function Toolbar({ role }) {
                 <div className="flex items-center gap-3">
 
                     <div className="w-8 h-8 bg-gray-700 rounded flex items-center justify-center text-xs">
-                        CRM
+                        {<img src={logo}/> || "CRM"}
                     </div>
 
                     <div className="font-semibold text-sm">
