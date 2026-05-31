@@ -56,8 +56,18 @@ export default function Toolbar({ role }) {
                 {/* LEFT */}
                 <div className="flex items-center gap-3">
 
-                    <div className="w-8 h-8 bg-gray-700 rounded flex items-center justify-center text-xs">
-                        {<img src={logo}/> || "CRM"}
+                    <div className="w-8 h-8 flex items-center justify-center text-xs text-white">
+                        {logo ? (
+                            <img
+                                src={logo}
+                                alt="CRM Logo"
+                                className="w-full h-full object-contain"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center font-medium">
+                                CRM
+                            </div>
+                        )}
                     </div>
 
                     <div className="font-semibold text-sm">
