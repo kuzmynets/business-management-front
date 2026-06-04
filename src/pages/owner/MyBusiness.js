@@ -41,7 +41,7 @@ export default function MyBusiness() {
             });
 
         } catch {
-            setError("Failed to load business");
+            setError("Не вдалося завантажити бізнес");
         } finally {
             setLoading(false);
         }
@@ -67,11 +67,11 @@ export default function MyBusiness() {
             });
 
             setBusiness(updated);
-            setSuccess("Business updated successfully");
+            setSuccess("Бізнес успішно оновлено");
             setShowSaveModal(false);
 
         } catch {
-            setError("Failed to update business");
+            setError("Не вдалося оновити бізнес");
         } finally {
             setSaving(false);
         }
@@ -86,12 +86,12 @@ export default function MyBusiness() {
             navigate("/");
 
         } catch {
-            setError("Failed to delete business");
+            setError("Не вдалося видалити бізнес");
         }
     };
 
     if (loading) {
-        return <div className="p-6">Loading...</div>;
+        return <div className="p-6">Завантаження...</div>;
     }
 
     return (
@@ -104,11 +104,11 @@ export default function MyBusiness() {
 
                     <div>
                         <h1 className="text-3xl font-bold">
-                            My Business
+                            Мій бізнес
                         </h1>
 
                         <p className="text-gray-500 mt-1">
-                            Manage your company profile
+                            Керування профілем компанії
                         </p>
                     </div>
 
@@ -131,11 +131,11 @@ export default function MyBusiness() {
 
                             <div>
                                 <h2 className="text-xl font-semibold">
-                                    Company Information
+                                    Інформація про компанію
                                 </h2>
 
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Basic information about your business
+                                    Основні дані бізнесу
                                 </p>
                             </div>
 
@@ -147,7 +147,7 @@ export default function MyBusiness() {
                                 />
                             ) : (
                                 <div className="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                                    Logo
+                                    Логотип
                                 </div>
                             )}
 
@@ -157,16 +157,13 @@ export default function MyBusiness() {
 
                             <div>
                                 <label className="block text-sm text-gray-500 mb-1">
-                                    Company Name
+                                    Назва компанії
                                 </label>
 
                                 <input
                                     value={form.name}
                                     onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            name: e.target.value
-                                        })
+                                        setForm({ ...form, name: e.target.value })
                                     }
                                     className="w-full border rounded-lg px-3 py-2"
                                 />
@@ -174,16 +171,13 @@ export default function MyBusiness() {
 
                             <div>
                                 <label className="block text-sm text-gray-500 mb-1">
-                                    Logo URL
+                                    URL логотипа
                                 </label>
 
                                 <input
                                     value={form.logo_url}
                                     onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            logo_url: e.target.value
-                                        })
+                                        setForm({ ...form, logo_url: e.target.value })
                                     }
                                     className="w-full border rounded-lg px-3 py-2"
                                 />
@@ -192,7 +186,7 @@ export default function MyBusiness() {
                         </div>
 
                         <div className="text-sm text-gray-500">
-                            Registered:
+                            Зареєстровано:
                             {" "}
                             {business?.created_at
                                 ? new Date(business.created_at).toLocaleDateString()
@@ -208,11 +202,11 @@ export default function MyBusiness() {
 
                             <div>
                                 <h2 className="text-xl font-semibold">
-                                    Subscription
+                                    Підписка
                                 </h2>
 
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Current business subscription plan
+                                    Поточний тариф бізнесу
                                 </p>
                             </div>
 
@@ -232,7 +226,7 @@ export default function MyBusiness() {
                                         onClick={() => navigate("/owner/subscribe")}
                                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                                     >
-                                        Upgrade Subscription
+                                        Оновити тариф
                                     </button>
                                 </div>
 
@@ -254,7 +248,7 @@ export default function MyBusiness() {
                                 : "bg-gray-400 cursor-not-allowed"
                             }`}
                         >
-                            Save Changes
+                            Зберегти зміни
                         </button>
 
                     </div>
@@ -264,11 +258,11 @@ export default function MyBusiness() {
 
                         <div>
                             <h2 className="text-xl font-semibold text-red-600">
-                                Danger Zone
+                                Небезпечна зона
                             </h2>
 
                             <p className="text-sm text-gray-500 mt-1">
-                                These actions are irreversible
+                                Ці дії неможливо скасувати
                             </p>
                         </div>
 
@@ -277,7 +271,7 @@ export default function MyBusiness() {
                                 onClick={() => setShowDeleteModal(true)}
                                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
                             >
-                                Delete Business
+                                Видалити бізнес
                             </button>
 
                         </div>
@@ -290,8 +284,8 @@ export default function MyBusiness() {
             {/* MODALS */}
             {showSaveModal && (
                 <Modal
-                    title="Save Changes"
-                    text="Apply changes to business settings?"
+                    title="Збереження змін"
+                    text="Застосувати зміни до налаштувань бізнесу?"
                     onClose={() => setShowSaveModal(false)}
                     onConfirm={updateBusiness}
                 />
@@ -299,8 +293,8 @@ export default function MyBusiness() {
 
             {showDeleteModal && (
                 <Modal
-                    title="Delete Business"
-                    text="This action permanently deletes all business data."
+                    title="Видалення бізнесу"
+                    text="Ця дія повністю видалить всі дані бізнесу."
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={deleteBusiness}
                     danger
@@ -328,7 +322,7 @@ function Modal({ title, text, onClose, onConfirm, danger }) {
                         onClick={onClose}
                         className="px-4 py-2 rounded-lg bg-gray-200"
                     >
-                        Cancel
+                        Скасувати
                     </button>
 
                     <button
@@ -337,7 +331,7 @@ function Modal({ title, text, onClose, onConfirm, danger }) {
                             danger ? "bg-red-600" : "bg-blue-600"
                         }`}
                     >
-                        Confirm
+                        Підтвердити
                     </button>
                 </div>
 

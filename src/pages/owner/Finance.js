@@ -36,7 +36,7 @@ export default function Finance() {
             setTotalPages(data?.total_pages || 1);
             setSummary(data?.summary || { income: 0, expenses: 0, profit: 0 });
         } catch {
-            setError("Failed to load finance data");
+            setError("Не вдалося завантажити фінансові дані");
         } finally {
             setLoading(false);
         }
@@ -48,16 +48,17 @@ export default function Finance() {
 
     const createExpense = async (e) => {
         e.preventDefault();
+
         const amount = Number(expenseForm.amount);
         const category = expenseForm.category.trim();
 
         if (!amount || amount <= 0) {
-            setError("Amount must be greater than zero");
+            setError("Сума має бути більшою за нуль");
             return;
         }
 
         if (!category) {
-            setError("Category is required");
+            setError("Категорія обов'язкова");
             return;
         }
 
@@ -83,7 +84,7 @@ export default function Finance() {
             await loadFinance(page);
 
         } catch {
-            setError("Failed to create expense");
+            setError("Не вдалося створити витрату");
         } finally {
             setExpenseLoading(false);
         }
@@ -103,7 +104,7 @@ export default function Finance() {
 
     const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
 
-    if (loading) return <div className="p-6">Loading...</div>;
+    if (loading) return <div className="p-6">Завантаження...</div>;
 
     return (
         <>
@@ -115,9 +116,9 @@ export default function Finance() {
                     {/* HEADER */}
                     <div>
                         <div>
-                            <h1 className="text-3xl font-bold">Finance</h1>
+                            <h1 className="text-3xl font-bold">Фінанси</h1>
                             <p className="text-gray-500 mt-1">
-                                Income, expenses and profit overview
+                                Доходи, витрати та прибуток
                             </p>
                         </div>
                     </div>
@@ -133,14 +134,14 @@ export default function Finance() {
                         onSubmit={createExpense}
                         className="bg-white p-5 rounded shadow space-y-3"
                     >
-                        <h2 className="font-semibold">Add Expense</h2>
+                        <h2 className="font-semibold">Додати витрату</h2>
 
                         <input
                             type="number"
                             min="0.01"
                             step="0.01"
                             required
-                            placeholder="Amount"
+                            placeholder="Сума"
                             value={expenseForm.amount}
                             onChange={e =>
                                 setExpenseForm({ ...expenseForm, amount: e.target.value })
@@ -150,7 +151,7 @@ export default function Finance() {
 
                         <input
                             required
-                            placeholder="Category"
+                            placeholder="Категорія"
                             value={expenseForm.category}
                             onChange={e =>
                                 setExpenseForm({ ...expenseForm, category: e.target.value })
@@ -159,7 +160,7 @@ export default function Finance() {
                         />
 
                         <input
-                            placeholder="Description"
+                            placeholder="Опис"
                             value={expenseForm.description}
                             onChange={e =>
                                 setExpenseForm({ ...expenseForm, description: e.target.value })
@@ -171,28 +172,28 @@ export default function Finance() {
                             disabled={expenseLoading}
                             className="bg-red-600 text-white px-4 py-2 rounded"
                         >
-                            {expenseLoading ? "Saving..." : "Add Expense"}
+                            {expenseLoading ? "Збереження..." : "Додати витрату"}
                         </button>
                     </form>
 
                     {/* BALANCE */}
                     <div className="grid md:grid-cols-3 gap-4">
                         <div className="bg-white p-6 rounded shadow">
-                            <div className="text-gray-500">Income</div>
+                            <div className="text-gray-500">Дохід</div>
                             <div className="text-2xl text-green-600 font-bold">
                                 ${Number(summary.income || 0).toFixed(2)}
                             </div>
                         </div>
 
                         <div className="bg-white p-6 rounded shadow">
-                            <div className="text-gray-500">Expenses</div>
+                            <div className="text-gray-500">Витрати</div>
                             <div className="text-2xl text-red-600 font-bold">
                                 ${Number(summary.expenses || 0).toFixed(2)}
                             </div>
                         </div>
 
                         <div className="bg-white p-6 rounded shadow">
-                            <div className="text-gray-500">Profit</div>
+                            <div className="text-gray-500">Прибуток</div>
                             <div className="text-2xl font-bold">
                                 ${Number(summary.profit || 0).toFixed(2)}
                             </div>
@@ -206,9 +207,9 @@ export default function Finance() {
                             onChange={e => setTypeFilter(e.target.value)}
                             className="border px-3 py-2 rounded"
                         >
-                            <option value="">All</option>
-                            <option value="INCOME">Income</option>
-                            <option value="EXPENSE">Expense</option>
+                            <option value="">Всі</option>
+                            <option value="INCOME">Дохід</option>
+                            <option value="EXPENSE">Витрата</option>
                         </select>
 
                         <select
@@ -216,7 +217,7 @@ export default function Finance() {
                             onChange={e => setCategoryFilter(e.target.value)}
                             className="border px-3 py-2 rounded"
                         >
-                            <option value="">All categories</option>
+                            <option value="">Всі категорії</option>
                             {categories.map(c => (
                                 <option key={c} value={c}>{c}</option>
                             ))}
@@ -242,11 +243,11 @@ export default function Finance() {
                         <table className="w-full">
                             <thead className="bg-gray-50">
                             <tr>
-                                <th className="p-3 text-left">Type</th>
-                                <th className="p-3 text-left">Amount</th>
-                                <th className="p-3 text-left">Category</th>
-                                <th className="p-3 text-left">Order</th>
-                                <th className="p-3 text-left">Date</th>
+                                <th className="p-3 text-left">Тип</th>
+                                <th className="p-3 text-left">Сума</th>
+                                <th className="p-3 text-left">Категорія</th>
+                                <th className="p-3 text-left">Замовлення</th>
+                                <th className="p-3 text-left">Дата</th>
                             </tr>
                             </thead>
 
@@ -272,17 +273,19 @@ export default function Finance() {
                             onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                             className="px-3 py-2 bg-white border rounded disabled:text-gray-400"
                         >
-                            Previous
+                            Попередня
                         </button>
+
                         <span className="text-sm text-gray-600">
-                            Page {page} of {totalPages}
+                            Сторінка {page} з {totalPages}
                         </span>
+
                         <button
                             disabled={page >= totalPages}
                             onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
                             className="px-3 py-2 bg-white border rounded disabled:text-gray-400"
                         >
-                            Next
+                            Наступна
                         </button>
                     </div>
 

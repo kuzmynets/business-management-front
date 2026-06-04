@@ -4,7 +4,6 @@ import { apiRequest } from "../api/client";
 import { AuthContext } from "../contexts/AuthContext";
 import { useBusiness } from "../contexts/BusinessContext";
 import LogoutButton from "./LogoutButton";
-import {imageListClasses} from "@mui/material";
 
 export default function Toolbar({ role }) {
     const { user } = useContext(AuthContext);
@@ -13,6 +12,7 @@ export default function Toolbar({ role }) {
     const [creating, setCreating] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState("");
+
     const logo = currentBusiness?.logo_url;
 
     const handleBusinessChange = (businessId) => {
@@ -53,14 +53,14 @@ export default function Toolbar({ role }) {
         <>
             <header className="h-14 bg-gray-900 text-white flex items-center justify-between px-6 shadow">
 
-                {/* LEFT */}
+                {/* ЛІВА ЧАСТИНА */}
                 <div className="flex items-center gap-3">
 
                     <div className="w-8 h-8 flex items-center justify-center text-xs text-white">
                         {logo ? (
                             <img
                                 src={logo}
-                                alt="CRM Logo"
+                                alt="Логотип CRM"
                                 className="w-full h-full object-contain"
                             />
                         ) : (
@@ -71,7 +71,7 @@ export default function Toolbar({ role }) {
                     </div>
 
                     <div className="font-semibold text-sm">
-                        {currentBusiness?.name || "Business System"}
+                        {currentBusiness?.name || "Система бізнесу"}
                     </div>
 
                     <div className="text-xs text-gray-400 ml-2">
@@ -80,36 +80,36 @@ export default function Toolbar({ role }) {
 
                 </div>
 
-                {/* CENTER NAV */}
+                {/* ЦЕНТРАЛЬНА НАВІГАЦІЯ */}
                 <nav className="flex gap-5 text-sm text-gray-200">
 
                     {role === "OWNER" && (
                         <>
-                            <Link className="hover:text-white" to="/owner/dashboard">Dashboard</Link>
-                            <Link className="hover:text-white" to="/owner/business">Business</Link>
-                            <Link className="hover:text-white" to="/owner/finance">Finance</Link>
-                            <Link className="hover:text-white" to="/owner/team">Team</Link>
-                            <Link className="hover:text-white" to="/owner/analytic">Analytics</Link>
-                            <Link className="hover:text-white" to="/owner/subscribe">Subscription</Link>
+                            <Link className="hover:text-white" to="/owner/dashboard">Панель</Link>
+                            <Link className="hover:text-white" to="/owner/business">Бізнес</Link>
+                            <Link className="hover:text-white" to="/owner/finance">Фінанси</Link>
+                            <Link className="hover:text-white" to="/owner/team">Команда</Link>
+                            <Link className="hover:text-white" to="/owner/analytic">Аналітика</Link>
+                            <Link className="hover:text-white" to="/owner/subscribe">Підписка</Link>
                         </>
                     )}
 
                     {role === "MANAGER" && (
                         <>
-                            <Link className="hover:text-white" to="/manager/dashboard">Dashboard</Link>
-                            <Link className="hover:text-white" to="/manager/orders">Orders</Link>
-                            <Link className="hover:text-white" to="/manager/tasks">Tasks</Link>
-                            <Link className="hover:text-white" to="/manager/team">Team</Link>
+                            <Link className="hover:text-white" to="/manager/dashboard">Панель</Link>
+                            <Link className="hover:text-white" to="/manager/orders">Замовлення</Link>
+                            <Link className="hover:text-white" to="/manager/tasks">Завдання</Link>
+                            <Link className="hover:text-white" to="/manager/team">Команда</Link>
                         </>
                     )}
 
                     {role === "EMPLOYEE" && (
-                        <Link className="hover:text-white" to="/employee/dashboard">Tasks</Link>
+                        <Link className="hover:text-white" to="/employee/dashboard">Завдання</Link>
                     )}
 
                 </nav>
 
-                {/* RIGHT */}
+                {/* ПРАВА ЧАСТИНА */}
                 <div className="flex items-center gap-3">
 
                     {businesses?.length > 0 && (
@@ -131,7 +131,7 @@ export default function Toolbar({ role }) {
                             onClick={openModal}
                             className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
                         >
-                            New Business
+                            Новий бізнес
                         </button>
                     )}
 
@@ -140,14 +140,14 @@ export default function Toolbar({ role }) {
                 </div>
             </header>
 
-            {/* MODAL */}
+            {/* МОДАЛЬНЕ ВІКНО */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
                     <div className="bg-white w-96 p-6 rounded-xl space-y-4">
 
                         <h2 className="text-lg font-semibold">
-                            Створити новий бізнес
+                            Створення бізнесу
                         </h2>
 
                         <input
