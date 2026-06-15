@@ -2,11 +2,9 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "../../api/client";
 import { AuthContext } from "../../contexts/AuthContext";
 import Toolbar from "../../components/Toolbar";
-import { useTranslation } from "react-i18next";
 
 export default function EmployeeDashboard() {
     const { user } = useContext(AuthContext);
-    const { t } = useTranslation();
 
     const [tasks, setTasks] = useState([]);
     const [manager, setManager] = useState(null);
@@ -20,12 +18,6 @@ export default function EmployeeDashboard() {
         IN_PROGRESS: "В процесі",
         PAUSED: "Призупинено",
         DONE: "Завершено",
-    };
-
-    const roleLabels = {
-        MANAGER: "Менеджер",
-        EMPLOYEE: "Працівник",
-        OWNER: "Власник",
     };
 
     const fetchTasks = useCallback(async () => {

@@ -50,12 +50,35 @@ export default function Team() {
         loadTeam();
     }, []);
 
-    const stats = useMemo(() => ({
-        managers: members.filter((member) => member.role === "MANAGER").length,
-        employees: members.filter((member) => member.role === "EMPLOYEE").length,
-        active: members.length,
-        pending: invites.filter((invite) => invite.status === "pending").length,
-    }), [invites, members]);
+    const stats = useMemo(() => {
+        const result = {
+            managers: 0,
+            employees: 0,
+            active: members.length,
+            pending: 0,
+        };
+
+        for (const member of members) {
+            if (member.role === "MANAGER") result.managers += 1;
+            if (member.role === "EMPLOYEE") result.employees += 1;
+        }
+
+        for (const invite of invites) {
+            if (invite.status === "pending") result.pending += 1;
+        }
+
+        return result;
+    }, [invites, members]);
+
+    const visibleMembers = useMemo(
+        () => isManager ? members.filter(member => member.role === "EMPLOYEE") : members,
+        [isManager, members]
+    );
+
+    const visibleInvites = useMemo(
+        () => isManager ? invites.filter(invite => invite.role === "EMPLOYEE") : invites,
+        [isManager, invites]
+    );
 
     const sendInvite = async (e) => {
         e.preventDefault();
@@ -175,14 +198,14 @@ export default function Team() {
                         <Skeleton />
                     ) : tab === "members" ? (
                         <MembersTable
-                            members={isManager ? members.filter(member => member.role === "EMPLOYEE") : members}
+                            members={visibleMembers}
                             onRemove={remove}
                             onKeep={keepMember}
                             isOwner={isOwner}
                         />
                     ) : (
                         <InvitesTable
-                            invites={isManager ? invites.filter(invite => invite.role === "EMPLOYEE") : invites}
+                            invites={visibleInvites}
                             onApprove={approve}
                             onReject={reject}
                             isOwner={isOwner}

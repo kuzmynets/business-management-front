@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "../../api/client";
 import { AuthContext } from "../../contexts/AuthContext";
 import Toolbar from "../../components/Toolbar";
@@ -15,6 +15,17 @@ export default function Analytic() {
     useEffect(() => {
         load();
     }, []);
+
+    const summary = useMemo(() => data?.summary || {}, [data]);
+    const revenueRows = useMemo(() => data?.revenue || [], [data]);
+    const maxRevenue = useMemo(
+        () => Math.max(...revenueRows.map((row) => Math.abs(Number(row.amount || 0))), 1),
+        [revenueRows]
+    );
+    const performance = useMemo(() => (data?.manager_performance || []).filter((person) => {
+        if (roleFilter === "ALL") return true;
+        return person.role === roleFilter;
+    }), [data, roleFilter]);
 
     const load = async () => {
         try {
@@ -68,12 +79,6 @@ export default function Analytic() {
         );
     }
 
-    const summary = data.summary || {};
-    const performance = (data.manager_performance || []).filter((person) => {
-        if (roleFilter === "ALL") return true;
-        return person.role === roleFilter;
-    });
-
     return (
         <>
             <Toolbar role={user.role} />
@@ -110,19 +115,19 @@ export default function Analytic() {
                         </div>
 
                         <div className="mt-5 space-y-3">
-                            {(data.revenue || []).map((item) => (
+                            {revenueRows.map((item) => (
                                 <div key={item.month} className="grid grid-cols-[120px_1fr_120px] gap-3 items-center">
                                     <div className="font-medium">{item.month}</div>
                                     <div className="h-3 bg-gray-100 rounded overflow-hidden">
                                         <div
                                             className="h-full bg-green-500"
-                                            style={{ width: `${barWidth(item.amount, data.revenue)}%` }}
+                                            style={{ width: `${barWidth(item.amount, maxRevenue)}%` }}
                                         />
                                     </div>
                                     <div className="text-right font-semibold">${money(item.amount)}</div>
                                 </div>
                             ))}
-                            {(data.revenue || []).length === 0 && (
+                            {revenueRows.length === 0 && (
                                 <div className="text-gray-500">Даних ще немає</div>
                             )}
                         </div>
@@ -217,7 +222,6 @@ function money(value) {
     return Number(value || 0).toFixed(2);
 }
 
-function barWidth(amount, rows) {
-    const max = Math.max(...(rows || []).map((row) => Math.abs(Number(row.amount || 0))), 1);
+function barWidth(amount, max) {
     return Math.max((Math.abs(Number(amount || 0)) / max) * 100, 4);
 }
