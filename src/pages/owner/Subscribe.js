@@ -46,31 +46,42 @@ export default function SubscribePage() {
         }
     };
 
-    if (loading) return <div className="p-6">Завантаження...</div>;
+    if (loading) {
+        return (
+            <div className="p-4 sm:p-6 text-sm sm:text-base">
+                Завантаження...
+            </div>
+        );
+    }
 
     return (
         <>
             <Toolbar role={user.role} />
 
-            <div className="min-h-screen bg-gray-100 p-6">
-                <div className="max-w-4xl mx-auto space-y-6">
+            <div className="min-h-screen bg-gray-100 p-3 sm:p-6">
+                <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
                     <div>
-                        <h1 className="text-3xl font-bold">Підписка</h1>
-                        <p className="text-gray-500 mt-1">
+                        <h1 className="text-2xl sm:text-3xl font-bold">
+                            Підписка
+                        </h1>
+                        <p className="text-gray-500 mt-1 text-sm sm:text-base">
                             Керування тарифним планом бізнесу
                         </p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
+                        <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded text-sm">
                             {error}
                         </div>
                     )}
 
                     {/* CURRENT PLAN */}
-                    <div className="bg-white p-5 rounded-xl shadow space-y-2">
-                        <h2 className="font-semibold text-lg">Поточний план</h2>
+                    <div className="bg-white p-4 sm:p-5 rounded-xl shadow space-y-2">
+
+                        <h2 className="font-semibold text-base sm:text-lg">
+                            Поточний план
+                        </h2>
 
                         {subscription ? (
                             <div className="space-y-1 text-sm text-gray-700">
@@ -79,26 +90,37 @@ export default function SubscribePage() {
                                 <div>Наступна оплата: {subscription.next_billing || "—"}</div>
                             </div>
                         ) : (
-                            <p className="text-gray-500">Активної підписки немає</p>
+                            <p className="text-gray-500 text-sm">
+                                Активної підписки немає
+                            </p>
                         )}
                     </div>
 
                     {/* PLANS */}
-                    <div className="bg-white p-5 rounded-xl shadow space-y-4">
-                        <h2 className="font-semibold text-lg">Доступні тарифи</h2>
+                    <div className="bg-white p-4 sm:p-5 rounded-xl shadow space-y-4">
+
+                        <h2 className="font-semibold text-base sm:text-lg">
+                            Доступні тарифи
+                        </h2>
 
                         {plans.length === 0 ? (
-                            <p className="text-gray-500">Тарифи відсутні</p>
+                            <p className="text-gray-500 text-sm">
+                                Тарифи відсутні
+                            </p>
                         ) : (
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+
                                 {plans.map(plan => (
                                     <label
                                         key={plan.id}
-                                        className={`border rounded-xl p-4 cursor-pointer transition
+                                        className={`
+                                            border rounded-xl p-4 cursor-pointer transition
+                                            min-h-[44px]
                                             ${selectedPlan === plan.id
                                             ? "border-blue-600 bg-blue-50"
                                             : "border-gray-300"
-                                        }`}
+                                        }
+                                        `}
                                     >
                                         <input
                                             type="radio"
@@ -109,25 +131,31 @@ export default function SubscribePage() {
                                             className="mr-2"
                                         />
 
-                                        <div className="font-semibold">
+                                        <div className="font-semibold text-sm sm:text-base">
                                             {plan.name}
                                         </div>
 
-                                        <div className="text-sm text-gray-500">
+                                        <div className="text-xs sm:text-sm text-gray-500">
                                             {plan.price} / {plan.interval}
                                         </div>
                                     </label>
                                 ))}
+
                             </div>
                         )}
 
                         <button
                             onClick={handleSubscribe}
                             disabled={!selectedPlan}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:bg-gray-400"
+                            className="
+                                bg-blue-600 text-white px-4 py-2 rounded-lg
+                                min-h-[44px] w-full sm:w-auto
+                                disabled:bg-gray-400
+                            "
                         >
                             Оформити підписку
                         </button>
+
                     </div>
 
                 </div>

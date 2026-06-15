@@ -45,22 +45,36 @@ export default function Analytic() {
         }
     };
 
-    if (loading) return <div className="p-6">Завантаження...</div>;
+    if (loading) {
+        return (
+            <div className="p-4 sm:p-6 text-sm sm:text-base">
+                Завантаження...
+            </div>
+        );
+    }
 
     if (subscriptionBlocked) {
         return (
             <>
                 <Toolbar role={user.role} />
-                <div className="min-h-screen bg-gray-100 p-6">
-                    <div className="max-w-4xl mx-auto bg-white rounded shadow p-10 text-center">
-                        <h1 className="text-3xl font-bold">Pro-аналітика</h1>
-                        <p className="text-gray-600 mt-4">
-                            Отримайте прибутковість, completion rate, топ-виконавців,
-                            вузькі місця процесів і динаміку доходу в одному екрані.
+                <div className="min-h-screen bg-gray-100 p-3 sm:p-6">
+                    <div className="max-w-4xl mx-auto bg-white rounded shadow p-6 sm:p-10 text-center">
+                        <h1 className="text-2xl sm:text-3xl font-bold">Pro-аналітика</h1>
+                        <p className="text-gray-600 mt-3 sm:mt-4 text-sm sm:text-base">
+                            Розширені метрики продуктивності та фінансів
                         </p>
+
                         <a
                             href="/owner/subscribe"
-                            className="inline-block mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded"
+                            className="
+                                inline-flex items-center justify-center
+                                mt-6 sm:mt-8
+                                bg-blue-600 hover:bg-blue-700 text-white
+                                px-4 sm:px-6 py-3
+                                rounded
+                                min-h-[44px]
+                                w-full sm:w-auto
+                            "
                         >
                             Оновити підписку
                         </a>
@@ -74,7 +88,9 @@ export default function Analytic() {
         return (
             <>
                 <Toolbar role={user.role} />
-                <div className="p-6 text-red-600">{error}</div>
+                <div className="p-4 sm:p-6 text-red-600 text-sm sm:text-base">
+                    {error}
+                </div>
             </>
         );
     }
@@ -83,92 +99,89 @@ export default function Analytic() {
         <>
             <Toolbar role={user.role} />
 
-            <div className="min-h-screen bg-gray-100 p-6">
-                <div className="max-w-7xl mx-auto space-y-6">
+            <div className="min-h-screen bg-gray-100 p-3 sm:p-6">
+                <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+
                     <div>
-                        <h1 className="text-3xl font-bold">Аналітика</h1>
-                        <p className="text-gray-500 mt-1">
-                            Фінанси, продуктивність команди і місця, де бізнес втрачає темп
+                        <h1 className="text-2xl sm:text-3xl font-bold">Аналітика</h1>
+                        <p className="text-gray-500 mt-1 text-sm sm:text-base">
+                            Фінанси та продуктивність
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                         <Metric title="Дохід" value={`$${money(summary.income)}`} />
                         <Metric title="Прибуток" value={`$${money(summary.profit)}`} />
-                        <Metric title="Виконання замовлень" value={`${summary.order_completion_rate || 0}%`} />
-                        <Metric title="Виконання задач" value={`${summary.task_completion_rate || 0}%`} />
+                        <Metric title="Замовлення" value={`${summary.order_completion_rate || 0}%`} />
+                        <Metric title="Задачі" value={`${summary.task_completion_rate || 0}%`} />
                     </div>
 
-                    <div className="grid md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                         <Metric title="Активні замовлення" value={summary.active_orders || 0} />
                         <Metric title="Активні задачі" value={summary.active_tasks || 0} />
                         <Metric title="Середній чек" value={`$${money(summary.avg_order_value)}`} />
-                        <Metric title="У команді" value={summary.team_members || 0} />
+                        <Metric title="Команда" value={summary.team_members || 0} />
                     </div>
 
-                    <section className="bg-white rounded shadow p-5">
-                        <div className="flex items-center justify-between gap-4">
-                            <div>
-                                <h2 className="text-lg font-semibold">Динаміка доходу</h2>
-                                <p className="text-sm text-gray-500">Чистий рух грошей по місяцях</p>
-                            </div>
-                        </div>
+                    <section className="bg-white rounded shadow p-4 sm:p-5 overflow-hidden">
+                        <h2 className="text-base sm:text-lg font-semibold">Дохід</h2>
 
-                        <div className="mt-5 space-y-3">
+                        <div className="mt-4 space-y-3 overflow-x-auto">
                             {revenueRows.map((item) => (
-                                <div key={item.month} className="grid grid-cols-[120px_1fr_120px] gap-3 items-center">
-                                    <div className="font-medium">{item.month}</div>
-                                    <div className="h-3 bg-gray-100 rounded overflow-hidden">
+                                <div
+                                    key={item.month}
+                                    className="grid grid-cols-[80px_1fr_80px] sm:grid-cols-[120px_1fr_120px] gap-2 sm:gap-3 items-center min-w-[320px]"
+                                >
+                                    <div className="text-sm font-medium">{item.month}</div>
+
+                                    <div className="h-2 sm:h-3 bg-gray-100 rounded overflow-hidden">
                                         <div
                                             className="h-full bg-green-500"
                                             style={{ width: `${barWidth(item.amount, maxRevenue)}%` }}
                                         />
                                     </div>
-                                    <div className="text-right font-semibold">${money(item.amount)}</div>
+
+                                    <div className="text-right text-sm sm:text-base font-semibold">
+                                        ${money(item.amount)}
+                                    </div>
                                 </div>
                             ))}
-                            {revenueRows.length === 0 && (
-                                <div className="text-gray-500">Даних ще немає</div>
-                            )}
                         </div>
                     </section>
 
-                    <section className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-white rounded shadow p-5">
-                            <h2 className="text-lg font-semibold">Топ-виконавці</h2>
-                            <div className="mt-4 space-y-3">
+                    <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+
+                        <div className="bg-white rounded shadow p-4 sm:p-5">
+                            <h2 className="text-base sm:text-lg font-semibold">Топ</h2>
+                            <div className="mt-3 sm:mt-4 space-y-3">
                                 {(data.top_performers || []).map((person) => (
                                     <Performer key={person.user_id} person={person} />
                                 ))}
-                                {(data.top_performers || []).length === 0 && (
-                                    <div className="text-gray-500">Поки немає завершених робіт</div>
-                                )}
                             </div>
                         </div>
 
-                        <div className="bg-white rounded shadow p-5">
-                            <h2 className="text-lg font-semibold">Вузькі місця</h2>
-                            <div className="mt-4 space-y-3">
+                        <div className="bg-white rounded shadow p-4 sm:p-5">
+                            <h2 className="text-base sm:text-lg font-semibold">Вузькі місця</h2>
+                            <div className="mt-3 sm:mt-4 space-y-3">
                                 {(data.bottlenecks || []).map((item) => (
-                                    <div key={item.status} className="flex justify-between border-b pb-2">
+                                    <div key={item.status} className="flex justify-between border-b pb-2 text-sm">
                                         <span>{item.status}</span>
                                         <span className="font-semibold text-red-600">{item.count}</span>
                                     </div>
                                 ))}
-                                {(data.bottlenecks || []).length === 0 && (
-                                    <div className="text-gray-500">Критичних затримок не видно</div>
-                                )}
                             </div>
                         </div>
+
                     </section>
 
-                    <section className="bg-white rounded shadow p-5">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-lg font-semibold">Командна ефективність</h2>
+                    <section className="bg-white rounded shadow p-4 sm:p-5">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <h2 className="text-base sm:text-lg font-semibold">Команда</h2>
+
                             <select
                                 value={roleFilter}
                                 onChange={(e) => setRoleFilter(e.target.value)}
-                                className="border px-3 py-2 rounded"
+                                className="border px-3 py-2 rounded min-h-[44px] text-sm"
                             >
                                 <option value="ALL">Усі</option>
                                 <option value="MANAGER">Менеджери</option>
@@ -176,12 +189,13 @@ export default function Analytic() {
                             </select>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-4 mt-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-5">
                             {performance.map((person) => (
                                 <Performer key={person.user_id} person={person} detailed />
                             ))}
                         </div>
                     </section>
+
                 </div>
             </div>
         </>
@@ -190,26 +204,34 @@ export default function Analytic() {
 
 function Metric({ title, value }) {
     return (
-        <div className="bg-white rounded shadow p-5">
-            <div className="text-sm text-gray-500">{title}</div>
-            <div className="text-2xl font-bold mt-2">{value}</div>
+        <div className="bg-white rounded shadow p-4 sm:p-5">
+            <div className="text-xs sm:text-sm text-gray-500">{title}</div>
+            <div className="text-xl sm:text-2xl font-bold mt-2">{value}</div>
         </div>
     );
 }
 
 function Performer({ person, detailed }) {
     const score = Number(person.orders_completed || 0) + Number(person.tasks_completed || 0);
+
     return (
-        <div className="border rounded p-4">
+        <div className="border rounded p-3 sm:p-4">
             <div className="flex justify-between gap-3">
-                <div>
-                    <div className="font-semibold">{person.name || "Unknown"}</div>
-                    <div className="text-sm text-gray-500">{person.role}</div>
+                <div className="min-w-0">
+                    <div className="font-semibold text-sm sm:text-base truncate">
+                        {person.name || "Unknown"}
+                    </div>
+                    <div className="text-xs sm:text-sm text-gray-500">
+                        {person.role}
+                    </div>
                 </div>
-                <div className="text-xl font-bold">{score}</div>
+                <div className="text-lg sm:text-xl font-bold">
+                    {score}
+                </div>
             </div>
+
             {detailed && (
-                <div className="grid grid-cols-2 gap-3 mt-4 text-sm">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-3 text-xs sm:text-sm">
                     <div>Замовлення: <b>{person.orders_completed}</b></div>
                     <div>Задачі: <b>{person.tasks_completed}</b></div>
                 </div>
